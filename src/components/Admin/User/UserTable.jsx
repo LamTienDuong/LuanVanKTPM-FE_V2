@@ -1,34 +1,41 @@
 import React, { useEffect, useState } from 'react';
 import { Table, Row, Col, Popconfirm, Button, message, notification } from 'antd';
 import InputSearch from './InputSearch';
-import { callDeleteBook, callFetchListBook } from '../../../services/api';
-import { DeleteTwoTone, EditTwoTone, ExportOutlined, PlusOutlined, ReloadOutlined } from '@ant-design/icons';
+import { callDeleteUser, callFetchListUser } from '../../../services/api';
+import { CloudUploadOutlined, DeleteTwoTone, EditTwoTone, ExportOutlined, PlusOutlined, ReloadOutlined } from '@ant-design/icons';
+import UserModalCreate from './UserModalCreate';
+import UserViewDetail from './UserViewDetail';
 import moment from 'moment/moment';
 import { FORMAT_DATE_DISPLAY } from '../../../utils/constant';
+import UserImport from './data/UserImport';
 import * as XLSX from 'xlsx';
+import UserModalUpdate from './UserModalUpdate';
 
-const ProductTable = () => {
-    const [listBook, setListBook] = useState([]);
+// https://stackblitz.com/run?file=demo.tsx
+const UserTable = () => {
+    const [listUser, setListUser] = useState([]);
     const [current, setCurrent] = useState(1);
     const [pageSize, setPageSize] = useState(5);
     const [total, setTotal] = useState(0);
 
     const [isLoading, setIsLoading] = useState(false);
     const [filter, setFilter] = useState("");
-    const [sortQuery, setSortQuery] = useState("sort=-updatedAt");
+    const [sortQuery, setSortQuery] = useState("");
 
     const [openModalCreate, setOpenModalCreate] = useState(false);
     const [openViewDetail, setOpenViewDetail] = useState(false);
     const [dataViewDetail, setDataViewDetail] = useState(null);
 
+    const [openModalImport, setOpenModalImport] = useState(false);
+
     const [openModalUpdate, setOpenModalUpdate] = useState(false);
     const [dataUpdate, setDataUpdate] = useState(null);
 
     useEffect(() => {
-        fetchBook();
+        fetchUser();
     }, [current, pageSize, filter, sortQuery]);
 
-    const fetchBook = async () => {
+    const fetchUser = async () => {
         setIsLoading(true)
         let query = `current=${current}&pageSize=${pageSize}`;
         if (filter) {
@@ -38,9 +45,9 @@ const ProductTable = () => {
             query += `&${sortQuery}`;
         }
 
-        const res = await callFetchListBook(query);
+        const res = await callFetchListUser(query);
         if (res && res.data) {
-            setListBook(res.data.result);
+            setListUser(res.data.result);
             setTotal(res.data.meta.total)
         }
         setIsLoading(false)
@@ -60,30 +67,19 @@ const ProductTable = () => {
             }
         },
         {
-            title: 'Tên sách',
-            dataIndex: 'mainText',
+            title: 'Tên hiển thị',
+            dataIndex: 'fullName',
             sorter: true
         },
         {
-            title: 'Thể loại',
-            dataIndex: 'category',
+            title: 'Email',
+            dataIndex: 'email',
+            sorter: true,
+        },
+        {
+            title: 'Số điện thoại',
+            dataIndex: 'phone',
             sorter: true
-        },
-        {
-            title: 'Tác giả',
-            dataIndex: 'author',
-            sorter: true,
-        },
-        {
-            title: 'Giá tiền',
-            dataIndex: 'price',
-            sorter: true,
-            // https://stackoverflow.com/questions/37985642/vnd-currency-formatting
-            render: (text, record, index) => {
-                return (
-                    <>{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(record.price)}</>
-                )
-            }
         },
         {
             title: 'Ngày cập nhật',
@@ -98,16 +94,15 @@ const ProductTable = () => {
         },
         {
             title: 'Action',
-            width: 100,
             render: (text, record, index) => {
                 return (
                     <>
 
                         <Popconfirm
                             placement="leftTop"
-                            title={"Xác nhận xóa book"}
-                            description={"Bạn có chắc chắn muốn xóa book này ?"}
-                            onConfirm={() => handleDeleteBook(record._id)}
+                            title={"Xác nhận xóa user"}
+                            description={"Bạn có chắc chắn muốn xóa user này ?"}
+                            onConfirm={() => handleDeleteUser(record._id)}
                             okText="Xác nhận"
                             cancelText="Hủy"
                         >
@@ -144,11 +139,11 @@ const ProductTable = () => {
         }
     };
 
-    const handleDeleteBook = async (id) => {
-        const res = await callDeleteBook(id);
+    const handleDeleteUser = async (userId) => {
+        const res = await callDeleteUser(userId);
         if (res && res.data) {
-            message.success('Xóa book thành công');
-            fetchBook();
+            message.success('Xóa user thành công');
+            fetchUser();
         } else {
             notification.error({
                 message: 'Có lỗi xảy ra',
@@ -162,13 +157,19 @@ const ProductTable = () => {
     const renderHeader = () => {
         return (
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <span>Table List Books</span>
+                <span>Table List Users</span>
                 <span style={{ display: 'flex', gap: 15 }}>
                     <Button
                         icon={<ExportOutlined />}
                         type="primary"
                         onClick={() => handleExportData()}
                     >Export</Button>
+
+                    <Button
+                        icon={<CloudUploadOutlined />}
+                        type="primary"
+                        onClick={() => setOpenModalImport(true)}
+                    >Import</Button>
 
                     <Button
                         icon={<PlusOutlined />}
@@ -189,16 +190,17 @@ const ProductTable = () => {
     }
 
     const handleSearch = (query) => {
+        setCurrent(1)
         setFilter(query);
     }
 
     const handleExportData = () => {
         // https://stackoverflow.com/questions/70871254/how-can-i-export-a-json-object-to-excel-using-nextjs-react
-        if (listBook.length > 0) {
-            const worksheet = XLSX.utils.json_to_sheet(listBook);
+        if (listUser.length > 0) {
+            const worksheet = XLSX.utils.json_to_sheet(listUser);
             const workbook = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
-            XLSX.writeFile(workbook, "ExportBook.csv");
+            XLSX.writeFile(workbook, "ExportUser.csv");
         }
     }
     return (
@@ -216,7 +218,7 @@ const ProductTable = () => {
                         loading={isLoading}
 
                         columns={columns}
-                        dataSource={listBook}
+                        dataSource={listUser}
                         onChange={onChange}
                         rowKey="_id"
                         pagination={
@@ -232,30 +234,36 @@ const ProductTable = () => {
                     />
                 </Col>
             </Row>
-            {/* <BookModalCreate
+            <UserModalCreate
                 openModalCreate={openModalCreate}
                 setOpenModalCreate={setOpenModalCreate}
-                fetchBook={fetchBook}
+                fetchUser={fetchUser}
             />
 
-            <BookViewDetail
+            <UserViewDetail
                 openViewDetail={openViewDetail}
                 setOpenViewDetail={setOpenViewDetail}
                 dataViewDetail={dataViewDetail}
                 setDataViewDetail={setDataViewDetail}
             />
 
-            <BookModalUpdate
+            <UserImport
+                openModalImport={openModalImport}
+                setOpenModalImport={setOpenModalImport}
+                fetchUser={fetchUser}
+            />
+
+            <UserModalUpdate
                 openModalUpdate={openModalUpdate}
                 setOpenModalUpdate={setOpenModalUpdate}
                 dataUpdate={dataUpdate}
                 setDataUpdate={setDataUpdate}
-                fetchBook={fetchBook}
-            /> */}
+                fetchUser={fetchUser}
+            />
 
         </>
     )
 }
 
 
-export default ProductTable;
+export default UserTable;
