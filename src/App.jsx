@@ -13,7 +13,6 @@ import LayoutAdmin from './components/Admin/LayoutAdmin';
 import './styles/reset.scss';
 import './styles/global.scss';
 import ManageUserPage from './pages/admin/user';
-import ManageBookPage from './pages/admin/book';
 import OrderPage from './pages/order';
 import HistoryPage from './pages/history';
 import AdminOrderPage from './pages/admin/order';
@@ -25,7 +24,8 @@ import { Footer } from 'antd/es/layout/layout';
 import RegisterPage from './pages/register';
 import { callFetchAccount } from './services/api';
 import { doGetAccountAction } from './redux/account/accountSlice';
-import AdminPage from './pages/admin/inde';
+import AdminPage from './pages/admin';
+import ManageProductPage from './pages/admin/product';
 
 const Layout = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -117,7 +117,7 @@ export default function App() {
           path: "book",
           element:
             <ProtectedRoute>
-              <ManageBookPage />
+              <ManageProductPage />
             </ProtectedRoute>
           ,
         },
