@@ -5,12 +5,9 @@ import {
 } from "react-router-dom";
 import { Outlet } from "react-router-dom";
 import Home from './components/Home';
-import { callFetchAccount } from './services/api';
 import { useDispatch, useSelector } from 'react-redux';
-import { doGetAccountAction } from './redux/account/accountSlice';
 import Loading from './components/Loading';
 import NotFound from './components/NotFound';
-import AdminPage from './pages/admin';
 import ProtectedRoute from './components/ProtectedRoute';
 import LayoutAdmin from './components/Admin/LayoutAdmin';
 import './styles/reset.scss';
@@ -26,6 +23,9 @@ import LoginPage from './pages/login';
 import Header from './components/Header';
 import { Footer } from 'antd/es/layout/layout';
 import RegisterPage from './pages/register';
+import { callFetchAccount } from './services/api';
+import { doGetAccountAction } from './redux/account/accountSlice';
+import AdminPage from './pages/admin/inde';
 
 const Layout = () => {
   const [searchTerm, setSearchTerm] = useState("");
