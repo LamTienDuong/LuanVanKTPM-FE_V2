@@ -3,14 +3,8 @@ import {
   createBrowserRouter,
   RouterProvider,
 } from "react-router-dom";
-import BookPage from './pages/book';
-import ContactPage from './pages/contact';
-import LoginPage from './pages/login';
 import { Outlet } from "react-router-dom";
-import Header from './components/Header';
-import Footer from './components/Footer';
 import Home from './components/Home';
-import RegisterPage from './pages/register';
 import { callFetchAccount } from './services/api';
 import { useDispatch, useSelector } from 'react-redux';
 import { doGetAccountAction } from './redux/account/accountSlice';
@@ -26,6 +20,12 @@ import ManageBookPage from './pages/admin/book';
 import OrderPage from './pages/order';
 import HistoryPage from './pages/history';
 import AdminOrderPage from './pages/admin/order';
+import ProductPage from './pages/product';
+import ContactPage from './pages/contact';
+import LoginPage from './pages/login';
+import Header from './components/Header';
+import { Footer } from 'antd/es/layout/layout';
+import RegisterPage from './pages/register';
 
 const Layout = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -73,7 +73,7 @@ export default function App() {
         },
         {
           path: "book/:slug",
-          element: <BookPage />,
+          element: <ProductPage />,
         },
         {
           path: "order",
