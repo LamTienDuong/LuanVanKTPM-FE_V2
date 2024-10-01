@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
-import ViewDetail from "../../components/Book/ViewDetail";
+import ViewDetail from "../../components/Product/ViewDetail";
 import { callFetchBookById } from "../../services/api";
 
 const ProductPage = () => {
