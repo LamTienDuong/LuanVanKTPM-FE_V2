@@ -1,7 +1,7 @@
 import axios from '../utils/axios-customize';
 
-export const callRegister = (fullName, email, password, phone) => {
-    return axios.post('/api/v1/user/register', { fullName, email, password, phone })
+export const callRegister = (name, email, password, phone) => {
+    return axios.post('/api/v1/auth/register', { name, email, password, phone })
 }
 
 export const callLogin = (username, password) => {
@@ -40,7 +40,9 @@ export const callDeleteUser = (id) => {
 ///////////////////////
 
 export const callFetchListBook = (query) => {
-    return axios.get(`/api/v1/book?${query}`)
+    console.log(query);
+    
+    return axios.get(`/api/v1/products?${query}`)
 }
 
 

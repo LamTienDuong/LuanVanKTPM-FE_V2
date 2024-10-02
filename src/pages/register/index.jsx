@@ -9,11 +9,11 @@ const RegisterPage = () => {
     const [isSubmit, setIsSubmit] = useState(false);
 
     const onFinish = async (values) => {
-        const { fullName, email, password, phone } = values;
+        const { name, email, password, phone } = values;
         setIsSubmit(true);
-        const res = await callRegister(fullName, email, password, phone);
+        const res = await callRegister(name, email, password, phone);
         setIsSubmit(false);
-        if (res?.data?._id) {
+        if (res?.data?.id) {
             message.success('Đăng ký tài khoản thành công!');
             navigate('/login')
         } else {
@@ -45,7 +45,7 @@ const RegisterPage = () => {
                             <Form.Item
                                 labelCol={{ span: 24 }} //whole column
                                 label="Họ tên"
-                                name="fullName"
+                                name="name"
                                 rules={[{ required: true, message: 'Họ tên không được để trống!' }]}
                             >
                                 <Input />

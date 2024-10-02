@@ -35,7 +35,7 @@ const LayoutAdmin = () => {
 
     const handleLogout = async () => {
         const res = await callLogout();
-        if (res && res.data) {
+        if (res) {
             dispatch(doLogoutAction());
             message.success('Đăng xuất thành công');
             navigate('/')
@@ -66,7 +66,7 @@ const LayoutAdmin = () => {
             ]
         },
         {
-            label: <Link to='/admin/book'>Manage Books</Link>,
+            label: <Link to='/admin/book'>Manage Product</Link>,
             key: 'book',
             icon: <ExceptionOutlined />
         },
@@ -99,7 +99,8 @@ const LayoutAdmin = () => {
 
     ];
 
-    const urlAvatar = `${import.meta.env.VITE_BACKEND_URL}/images/avatar/${user?.avatar}`;
+    // const urlAvatar = `${import.meta.env.VITE_BACKEND_URL}/images/avatar/${user?.avatar}`;
+    const urlAvatar = `${import.meta.env.VITE_BACKEND_URL}/images/avatar/avatar.png`;
 
     return (
         <>
@@ -133,7 +134,7 @@ const LayoutAdmin = () => {
                         <Dropdown menu={{ items: itemsDropdown }} trigger={['click']}>
                             <Space style={{ cursor: "pointer" }}>
                                 <Avatar src={urlAvatar} />
-                                {user?.fullName}
+                                {user?.name}
                             </Space>
                         </Dropdown>
                     </div>

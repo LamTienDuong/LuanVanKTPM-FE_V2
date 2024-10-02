@@ -24,10 +24,10 @@ const Header = (props) => {
 
     const handleLogout = async () => {
         const res = await callLogout();
-        if (res && res.data) {
+        if (res) {
             dispatch(doLogoutAction());
             message.success('Đăng xuất thành công');
-            navigate('/')
+            navigate('/');
         }
     }
 
@@ -52,14 +52,15 @@ const Header = (props) => {
         },
 
     ];
-    if (user?.role === 'ADMIN') {
+    if (user?.role?.name === 'SUPER_ADMIN') {
         items.unshift({
             label: <Link to='/admin'>Trang quản trị</Link>,
             key: 'admin',
         })
     }
 
-    const urlAvatar = `${import.meta.env.VITE_BACKEND_URL}/images/avatar/${user?.avatar}`;
+    // const urlAvatar = `${import.meta.env.VITE_BACKEND_URL}/images/avatar/${user?.avatar}`;
+    const urlAvatar = `${import.meta.env.VITE_BACKEND_URL}/images/avatar/avatar.png`;
 
     const contentPopover = () => {
         return (
@@ -99,7 +100,7 @@ const Header = (props) => {
                         }}>☰</div>
                         <div className='page-header__logo'>
                             <span className='logo'>
-                                <span onClick={() => navigate('/')}> <FaReact className='rotate icon-react' />Hỏi Dân !T</span>
+                                <span onClick={() => navigate('/')}> <FaReact className='rotate icon-react' />REACT SHOP</span>
 
                                 <VscSearchFuzzy className='icon-search' />
                             </span>
@@ -138,8 +139,8 @@ const Header = (props) => {
                                     :
                                     <Dropdown menu={{ items }} trigger={['click']}>
                                         <Space >
-                                            <Avatar src={urlAvatar} />
-                                            {user?.fullName}
+                                            <Avatar src={`${isAuthenticated ? urlAvatar : ''}`} />
+                                            {user?.name}
                                         </Space>
                                     </Dropdown>
                                 }

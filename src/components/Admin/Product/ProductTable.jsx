@@ -6,16 +6,17 @@ import { DeleteTwoTone, EditTwoTone, ExportOutlined, PlusOutlined, ReloadOutline
 import moment from 'moment/moment';
 import { FORMAT_DATE_DISPLAY } from '../../../utils/constant';
 import * as XLSX from 'xlsx';
+import ProductViewDetail from './ProductViewDetail';
 
 const ProductTable = () => {
     const [listBook, setListBook] = useState([]);
     const [current, setCurrent] = useState(1);
-    const [pageSize, setPageSize] = useState(5);
+    const [pageSize, setPageSize] = useState(1);
     const [total, setTotal] = useState(0);
 
     const [isLoading, setIsLoading] = useState(false);
     const [filter, setFilter] = useState("");
-    const [sortQuery, setSortQuery] = useState("sort=-updatedAt");
+    const [sortQuery, setSortQuery] = useState("sort=name,asc");
 
     const [openModalCreate, setOpenModalCreate] = useState(false);
     const [openViewDetail, setOpenViewDetail] = useState(false);
@@ -30,7 +31,7 @@ const ProductTable = () => {
 
     const fetchBook = async () => {
         setIsLoading(true)
-        let query = `current=${current}&pageSize=${pageSize}`;
+        let query = `page=${current}&size=${pageSize}`;
         if (filter) {
             query += `&${filter}`;
         }
@@ -47,36 +48,61 @@ const ProductTable = () => {
     }
 
     const columns = [
+        // {
+        //     title: 'Id',
+        //     dataIndex: '_id',
+        //     render: (text, record, index) => {
+        //         return (
+        //             <a href='#' onClick={() => {
+        //                 setDataViewDetail(record);
+        //                 setOpenViewDetail(true);
+        //             }}>{record.id}</a>
+        //         )
+        //     }
+        // },
         {
-            title: 'Id',
-            dataIndex: '_id',
+            title: 'STT',
+            render: (_, record, index) => {
+                return (
+                    <p>{(index + 1) + (current - 1) * pageSize}</p>
+                )
+            }
+        },
+        {
+            title: 'Tên sản phẩm',
+            dataIndex: 'name',
+            key: 'name',
+            sorter: true,
             render: (text, record, index) => {
                 return (
                     <a href='#' onClick={() => {
                         setDataViewDetail(record);
                         setOpenViewDetail(true);
-                    }}>{record._id}</a>
+                    }}>{record.name}</a>
                 )
             }
         },
         {
-            title: 'Tên sách',
-            dataIndex: 'mainText',
-            sorter: true
-        },
-        {
             title: 'Thể loại',
             dataIndex: 'category',
-            sorter: true
+            key: 'category',
+            sorter: true,
+            render: (text, record, index) => {
+                return (
+                    <p>{record.category.name}</p>
+                )
+            }
         },
         {
-            title: 'Tác giả',
-            dataIndex: 'author',
+            title: 'Số lượng',
+            dataIndex: 'quantity',
+            key: 'quantity',
             sorter: true,
         },
         {
             title: 'Giá tiền',
             dataIndex: 'price',
+            key: 'price',
             sorter: true,
             // https://stackoverflow.com/questions/37985642/vnd-currency-formatting
             render: (text, record, index) => {
@@ -86,12 +112,13 @@ const ProductTable = () => {
             }
         },
         {
-            title: 'Ngày cập nhật',
-            dataIndex: 'updatedAt',
+            title: 'Ngày tạo',
+            dataIndex: 'createdAt',
+            key: 'createdAt',
             sorter: true,
             render: (text, record, index) => {
                 return (
-                    <>{moment(record.updatedAt).format(FORMAT_DATE_DISPLAY)}</>
+                    <>{moment(record.createdAt).format(FORMAT_DATE_DISPLAY)}</>
                 )
             }
 
@@ -162,7 +189,7 @@ const ProductTable = () => {
     const renderHeader = () => {
         return (
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <span>Table List Books</span>
+                <span>Table List Products</span>
                 <span style={{ display: 'flex', gap: 15 }}>
                     <Button
                         icon={<ExportOutlined />}
@@ -214,7 +241,6 @@ const ProductTable = () => {
                     <Table
                         title={renderHeader}
                         loading={isLoading}
-
                         columns={columns}
                         dataSource={listBook}
                         onChange={onChange}
@@ -236,16 +262,16 @@ const ProductTable = () => {
                 openModalCreate={openModalCreate}
                 setOpenModalCreate={setOpenModalCreate}
                 fetchBook={fetchBook}
-            />
+            /> */}
 
-            <BookViewDetail
+            <ProductViewDetail
                 openViewDetail={openViewDetail}
                 setOpenViewDetail={setOpenViewDetail}
                 dataViewDetail={dataViewDetail}
                 setDataViewDetail={setDataViewDetail}
             />
 
-            <BookModalUpdate
+            {/* <BookModalUpdate
                 openModalUpdate={openModalUpdate}
                 setOpenModalUpdate={setOpenModalUpdate}
                 dataUpdate={dataUpdate}
