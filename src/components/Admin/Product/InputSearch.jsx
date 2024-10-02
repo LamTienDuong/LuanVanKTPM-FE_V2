@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, Col, Form, Input, Row, theme } from 'antd';
+import { Button, Col, Form, Input, InputNumber, Row, theme } from 'antd';
 
 const InputSearch = (props) => {
     const { token } = theme.useToken();
@@ -14,18 +14,13 @@ const InputSearch = (props) => {
 
     const onFinish = (values) => {
         let query = "";
-        //build query
-        if (values.mainText) {
-            query += `&mainText=/${values.mainText}/i`
+        if (values.name) {
+            query += `&name=~${values.name}/`
         }
-        if (values.author) {
-            query += `&author=/${values.author}/i`
-        }
-
         if (values.category) {
             query += `&category=/${values.category}/i`
         }
-
+        
         if (query) {
             props.handleSearch(query);
         }
@@ -51,29 +46,53 @@ const InputSearch = (props) => {
                 <Col span={8}>
                     <Form.Item
                         labelCol={{ span: 24 }}
-                        name={`mainText`}
-                        label={`Tên sách`}
+                        name={`name`}
+                        label={`Tên sản phẩm`}
                     >
                         <Input />
                     </Form.Item>
                 </Col>
-                <Col span={8}>
-                    <Form.Item
-                        labelCol={{ span: 24 }}
-                        name={`author`}
-                        label={`Tác giả`}
-                    >
-                        <Input />
-                    </Form.Item>
-                </Col>
-
-                <Col span={8}>
+                <Col span={6}>
                     <Form.Item
                         labelCol={{ span: 24 }}
                         name={`category`}
                         label={`Thể loại`}
                     >
                         <Input />
+                    </Form.Item>
+                </Col>
+                <Col span={10}>
+                    <Form.Item
+                        label="Khoảng giá"
+                        labelCol={{ span: 24 }}
+                    >
+                        <Row gutter={[10, 10]} style={{ width: "100%" }}>
+                            <Col xl={11} md={24}>
+                                <Form.Item name={["range", 'from']}>
+                                    <InputNumber
+                                        name='from'
+                                        min={0}
+                                        placeholder="đ TỪ"
+                                        formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                                        style={{ width: '100%' }}
+                                    />
+                                </Form.Item>
+                            </Col>
+                            <Col xl={2} md={0}>
+                                <div > - </div>
+                            </Col>
+                            <Col xl={11} md={24}>
+                                <Form.Item name={["range", 'to']}>
+                                    <InputNumber
+                                        name='to'
+                                        min={0}
+                                        placeholder="đ ĐẾN"
+                                        formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                                        style={{ width: '100%' }}
+                                    />
+                                </Form.Item>
+                            </Col>
+                        </Row>
                     </Form.Item>
                 </Col>
             </Row>

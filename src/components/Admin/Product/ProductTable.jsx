@@ -7,6 +7,8 @@ import moment from 'moment/moment';
 import { FORMAT_DATE_DISPLAY } from '../../../utils/constant';
 import * as XLSX from 'xlsx';
 import ProductViewDetail from './ProductViewDetail';
+import ProductModalCreate from './ProductModalCreate';
+import ProductModalUpdate from './ProductModalUpdate';
 
 const ProductTable = () => {
     const [listBook, setListBook] = useState([]);
@@ -189,7 +191,9 @@ const ProductTable = () => {
     const renderHeader = () => {
         return (
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <span>Table List Products</span>
+                <span>
+                    <h3>Danh sách sản phẩm</h3>
+                </span>
                 <span style={{ display: 'flex', gap: 15 }}>
                     <Button
                         icon={<ExportOutlined />}
@@ -258,11 +262,11 @@ const ProductTable = () => {
                     />
                 </Col>
             </Row>
-            {/* <BookModalCreate
+            <ProductModalCreate
                 openModalCreate={openModalCreate}
                 setOpenModalCreate={setOpenModalCreate}
                 fetchBook={fetchBook}
-            /> */}
+            />
 
             <ProductViewDetail
                 openViewDetail={openViewDetail}
@@ -271,13 +275,13 @@ const ProductTable = () => {
                 setDataViewDetail={setDataViewDetail}
             />
 
-            {/* <BookModalUpdate
+            <ProductModalUpdate
                 openModalUpdate={openModalUpdate}
                 setOpenModalUpdate={setOpenModalUpdate}
                 dataUpdate={dataUpdate}
                 setDataUpdate={setDataUpdate}
                 fetchBook={fetchBook}
-            /> */}
+            />
 
         </>
     )

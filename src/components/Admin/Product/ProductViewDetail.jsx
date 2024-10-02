@@ -7,6 +7,8 @@ import { v4 as uuidv4 } from 'uuid';
 
 const ProductViewDetail = (props) => {
     const { openViewDetail, setOpenViewDetail, dataViewDetail, setDataViewDetail } = props;
+    console.log(dataViewDetail);
+    
     const onClose = () => {
         setOpenViewDetail(false);
         setDataViewDetail(null);
@@ -45,7 +47,6 @@ const ProductViewDetail = (props) => {
     }, [dataViewDetail])
 
     const handleCancel = () => {
-        setFileList(null);
         setPreviewOpen(false);
     }
         
@@ -80,7 +81,7 @@ const ProductViewDetail = (props) => {
                     <Descriptions.Item label="Giá tiền">{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(dataViewDetail?.price ?? 0)}</Descriptions.Item>
                     {/* <Descriptions.Item label="Số lượng">{dataViewDetail?.quantity ?? 0}</Descriptions.Item> */}
                     <Descriptions.Item label="Đã bán">{dataViewDetail?.sold ?? 0}</Descriptions.Item>
-
+                    <Descriptions.Item label="isActive">{dataViewDetail?.active ? 'TRUE' : 'FALSE'}</Descriptions.Item>
                     <Descriptions.Item label="Thể loại" span={2}>
                         <Badge status="processing" text={dataViewDetail?.category?.name} />
                     </Descriptions.Item>
