@@ -24,7 +24,7 @@ const ViewOrder = (props) => {
     const handleOnChangeInput = (value, book) => {
         if (!value || value < 1) return;
         if (!isNaN(value)) {
-            dispatch(doUpdateCartAction({ quantity: value, detail: book, _id: book._id }))
+            dispatch(doUpdateCartAction({ quantity: value, detail: book, id: book.id }))
         }
     }
 
@@ -36,9 +36,9 @@ const ViewOrder = (props) => {
                     return (
                         <div className='order-book' key={`index-${index}`}>
                             <div className='book-content'>
-                                <img src={`${import.meta.env.VITE_BACKEND_URL}/images/book/${book?.detail?.thumbnail}`} />
+                                <img src={`${import.meta.env.VITE_BACKEND_URL}/images/product/${book?.detail?.thumbnail}`} />
                                 <div className='title'>
-                                    {book?.detail?.mainText}
+                                    {book?.detail?.name}
                                 </div>
                                 <div className='price'>
                                     {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(currentBookPrice)}

@@ -21,14 +21,14 @@ export const orderSlice = createSlice({
             let carts = state.carts;
             const item = action.payload;
 
-            let isExistIndex = carts.findIndex(c => c._id === item._id);
+            let isExistIndex = carts.findIndex(c => c.id === item.id);
             if (isExistIndex > -1) {
                 carts[isExistIndex].quantity = carts[isExistIndex].quantity + item.quantity;
                 if (carts[isExistIndex].quantity > carts[isExistIndex].detail.quantity) {
                     carts[isExistIndex].quantity = carts[isExistIndex].detail.quantity;
                 }
             } else {
-                carts.push({ quantity: item.quantity, _id: item._id, detail: item.detail })
+                carts.push({ quantity: item.quantity, id: item.id, detail: item.detail })
             }
             //update redux
             state.carts = carts;
@@ -39,14 +39,14 @@ export const orderSlice = createSlice({
             let carts = state.carts;
             const item = action.payload;
 
-            let isExistIndex = carts.findIndex(c => c._id === item._id);
+            let isExistIndex = carts.findIndex(c => c.id === item.id);
             if (isExistIndex > -1) {
                 carts[isExistIndex].quantity = item.quantity;
                 if (carts[isExistIndex].quantity > carts[isExistIndex].detail.quantity) {
                     carts[isExistIndex].quantity = carts[isExistIndex].detail.quantity;
                 }
             } else {
-                carts.push({ quantity: item.quantity, _id: item._id, detail: item.detail })
+                carts.push({ quantity: item.quantity, id: item.id, detail: item.detail })
             }
             //update redux
             state.carts = carts;

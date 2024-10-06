@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
-import { Button, Col, Form, Input, InputNumber, Row, theme } from 'antd';
+import React, { useEffect, useState } from 'react';
+import { Button, Col, Form, Input, InputNumber, Row, Select, theme } from 'antd';
+import { callFetchCategory } from '../../../services/api';
 
 const InputSearch = (props) => {
     const { token } = theme.useToken();
     const [form] = Form.useForm();
+    const [listCategory, setListCategory] = useState([])
 
     const formStyle = {
         maxWidth: 'none',
@@ -12,15 +14,46 @@ const InputSearch = (props) => {
         padding: 24,
     };
 
+    useEffect(() => {
+        const fetchCategory = async () => {
+            const res = await callFetchCategory();
+            if (res && res.data) {
+                const d = res.data.result.map(item => {
+                    return { label: item.name, value: item.name }
+                })
+                setListCategory(d);
+            }
+        }
+        fetchCategory();
+    }, [])
+
     const onFinish = (values) => {
-        let query = "";
-        if (values.name) {
-            query += `&name=~${values.name}/`
+        const { name, category, from = values.range.from, to = values.range.to } = values;
+
+        let query = "filter=";
+        if (name) {
+            query += `name ~ '${values.name}'`;
         }
-        if (values.category) {
-            query += `&category=/${values.category}/i`
+
+        if (name && category) {
+            query += ` and category.name ~ '${values.category}'`;
+
+        } else if (category) {
+            query += `category.name ~ '${values.category}'`;
         }
-        
+
+        if ((name || category) && from) {
+            query += ` and price >: '${values.range.from}'`
+        } else if (from) {
+            query += `price >: '${values.range.from}'`
+        }
+
+        if ((name || category || from) && to) {
+            query += ` and price <: '${values.range.to}'`
+        } else if (to) {
+            query += `price <: '${values.range.to}'`
+        }
+
         if (query) {
             props.handleSearch(query);
         }
@@ -55,10 +88,16 @@ const InputSearch = (props) => {
                 <Col span={6}>
                     <Form.Item
                         labelCol={{ span: 24 }}
-                        name={`category`}
-                        label={`Thể loại`}
+                        label="Thể loại"
+                        name="category"
                     >
-                        <Input />
+                        <Select
+                            defaultValue={null}
+                            showSearch
+                            allowClear
+                            //  onChange={handleChange}
+                            options={listCategory}
+                        />
                     </Form.Item>
                 </Col>
                 <Col span={10}>

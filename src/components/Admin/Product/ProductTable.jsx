@@ -13,7 +13,7 @@ import ProductModalUpdate from './ProductModalUpdate';
 const ProductTable = () => {
     const [listBook, setListBook] = useState([]);
     const [current, setCurrent] = useState(1);
-    const [pageSize, setPageSize] = useState(1);
+    const [pageSize, setPageSize] = useState(5);
     const [total, setTotal] = useState(0);
 
     const [isLoading, setIsLoading] = useState(false);
@@ -132,7 +132,7 @@ const ProductTable = () => {
                 return (
                     <>
 
-                        <Popconfirm
+                        {/* <Popconfirm
                             placement="leftTop"
                             title={"Xác nhận xóa book"}
                             description={"Bạn có chắc chắn muốn xóa book này ?"}
@@ -143,7 +143,7 @@ const ProductTable = () => {
                             <span style={{ cursor: "pointer", margin: "0 20px" }}>
                                 <DeleteTwoTone twoToneColor="#ff4d4f" />
                             </span>
-                        </Popconfirm>
+                        </Popconfirm> */}
 
                         <EditTwoTone
                             twoToneColor="#f57800" style={{ cursor: "pointer" }}

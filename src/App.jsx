@@ -72,7 +72,7 @@ export default function App() {
           element: <ContactPage />,
         },
         {
-          path: "book/:slug",
+          path: "product/:slug",
           element: <ProductPage />,
         },
         {
@@ -114,7 +114,7 @@ export default function App() {
           ,
         },
         {
-          path: "book",
+          path: "product",
           element:
             <ProtectedRoute>
               <ManageProductPage />

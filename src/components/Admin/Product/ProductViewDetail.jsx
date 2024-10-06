@@ -7,7 +7,6 @@ import { v4 as uuidv4 } from 'uuid';
 
 const ProductViewDetail = (props) => {
     const { openViewDetail, setOpenViewDetail, dataViewDetail, setDataViewDetail } = props;
-    console.log(dataViewDetail);
     
     const onClose = () => {
         setOpenViewDetail(false);

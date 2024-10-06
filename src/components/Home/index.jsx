@@ -26,10 +26,10 @@ const Home = () => {
 
     useEffect(() => {
         const initCategory = async () => {
-            const res = await callFetchCategory();
+            const res = await callFetchCategory();            
             if (res && res.data) {
-                const d = res.data.map(item => {
-                    return { label: item, value: item }
+                const d = res.data.result.map(item => {
+                    return { label: item.name, value: item.name }
                 })
                 setListCategory(d);
             }
@@ -44,16 +44,16 @@ const Home = () => {
     const fetchBook = async () => {
         setIsLoading(true)
         let query = `current=${current}&pageSize=${pageSize}`;
-        if (filter) {
-            query += `&${filter}`;
-        }
-        if (sortQuery) {
-            query += `&${sortQuery}`;
-        }
+        // if (filter) {
+        //     query += `&${filter}`;
+        // }
+        // if (sortQuery) {
+        //     query += `&${sortQuery}`;
+        // }
 
-        if (searchTerm) {
-            query += `&mainText=/${searchTerm}/i`;
-        }
+        // if (searchTerm) {
+        //     query += `&mainText=/${searchTerm}/i`;
+        // }
 
         const res = await callFetchListBook(query);
         if (res && res.data) {
@@ -168,8 +168,10 @@ const Home = () => {
     }
 
     const handleRedirectBook = (book) => {
-        const slug = convertSlug(book.mainText);
-        navigate(`/book/${slug}?id=${book._id}`)
+        console.log(book.id);
+        
+        // const slug = convertSlug(book.mainText);
+        navigate(`/product/id=${book.id}`)
     }
 
     return (
@@ -327,9 +329,9 @@ const Home = () => {
                                                 <div className="column" key={`book-${index}`} onClick={() => handleRedirectBook(item)}>
                                                     <div className='wrapper'>
                                                         <div className='thumbnail'>
-                                                            <img src={`${import.meta.env.VITE_BACKEND_URL}/images/book/${item.thumbnail}`} alt="thumbnail book" />
+                                                            <img src={`${import.meta.env.VITE_BACKEND_URL}/images/product/${item.thumbnail}`} alt="thumbnail book" />
                                                         </div>
-                                                        <div className='text' title={item.mainText}>{item.mainText}</div>
+                                                        <div className='text' title={item.mainText}>{item.name}</div>
                                                         <div className='price'>
                                                             {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(item?.price ?? 0)}
                                                         </div>

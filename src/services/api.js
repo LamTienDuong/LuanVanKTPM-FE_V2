@@ -61,9 +61,19 @@ export const callCreateBook = (thumbnail, slider, name, price, sold, quantity, c
     })
 }
 
-export const callUpdateBook = (id, thumbnail, slider, mainText, author, price, sold, quantity, category) => {
-    return axios.put(`/api/v1/book/${id}`, {
-        thumbnail, slider, mainText, author, price, sold, quantity, category
+export const callUpdateBook = (id, thumbnail, slider, name, price, category, active, quantity, sold) => {    
+    return axios.put(`/api/v1/products`, {
+        id, 
+        thumbnail, 
+        slider, 
+        name, 
+        price, 
+        category: {
+            name: category
+        },
+        active,
+        quantity, 
+        sold, 
     })
 }
 
@@ -87,11 +97,17 @@ export const callDeleteBook = (id) => {
 }
 
 export const callFetchBookById = (id) => {
-    return axios.get(`api/v1/book/${id}`)
+    return axios.get(`api/v1/products/${id}`)
+}
+
+export const createItemInOrder = (data) => {
+    return axios.post('/api/v1/items', {
+        ...data
+    })
 }
 
 export const callPlaceOrder = (data) => {
-    return axios.post('/api/v1/order', {
+    return axios.post('/api/v1/orders', {
         ...data
     })
 }

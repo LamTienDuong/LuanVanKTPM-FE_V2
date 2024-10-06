@@ -12,7 +12,6 @@ const ProductModalUpdate = (props) => {
     const [listCategory, setListCategory] = useState([])
     const [form] = Form.useForm();
 
-
     const [loading, setLoading] = useState(false);
     const [loadingSlider, setLoadingSlider] = useState(false);
 
@@ -26,8 +25,7 @@ const ProductModalUpdate = (props) => {
     const [previewTitle, setPreviewTitle] = useState('');
 
     const [initForm, setInitForm] = useState(null);
-    // console.log(initForm);
-    
+
 
     useEffect(() => {
         const fetchCategory = async () => {
@@ -69,6 +67,7 @@ const ProductModalUpdate = (props) => {
                 category: dataUpdate.category.name,
                 quantity: dataUpdate.quantity,
                 sold: dataUpdate.sold,
+                active: dataUpdate.active,
                 thumbnail: { fileList: arrThumbnail },
                 slider: { fileList: arrSlider }
             }
@@ -85,7 +84,7 @@ const ProductModalUpdate = (props) => {
 
     const onFinish = async (values) => {
         // console.log(values);
-        
+
         if (dataThumbnail.length === 0) {
             notification.error({
                 message: 'Lỗi validate',
@@ -103,19 +102,18 @@ const ProductModalUpdate = (props) => {
         }
 
 
-        const { _id, mainText, author, price, sold, quantity, category } = values;
+        const { id, name, price, category, active = values.switch, quantity, sold } = values;
         const thumbnail = dataThumbnail[0].name;
-        const slider = dataSlider.map(item => item.name);
-
+        const slider = dataSlider.map(item => item.name);        
         setIsSubmit(true)
-        const res = await callUpdateBook(_id, thumbnail, slider, mainText, author, price, sold, quantity, category);
+        const res = await callUpdateBook(id, thumbnail, slider, name, price, category, active, quantity, sold);
         if (res && res.data) {
-            message.success('Cập nhật book thành công');
+            setOpenModalUpdate(false);
+            message.success('Cập nhật sản phẩm thành công');
             form.resetFields();
             setDataSlider([]);
             setDataThumbnail([]);
             setInitForm(null);
-            setOpenModalUpdate(false);
             await props.fetchBook()
         } else {
             notification.error({
@@ -164,8 +162,8 @@ const ProductModalUpdate = (props) => {
         const res = await callUploadBookImg(file);
         if (res && res.data) {
             setDataThumbnail([{
-                name: res.data.fileUploaded,
-                uid: file.uid
+                name: res.data.fileName,
+                // uid: file.uid
             }])
             onSuccess('ok')
         } else {
@@ -178,8 +176,8 @@ const ProductModalUpdate = (props) => {
         if (res && res.data) {
             //copy previous state => upload multiple images
             setDataSlider((dataSlider) => [...dataSlider, {
-                name: res.data.fileUploaded,
-                uid: file.uid
+                name: res.data.fileName,
+                // uid: file.uid
             }])
             onSuccess('ok')
         } else {
@@ -218,10 +216,11 @@ const ProductModalUpdate = (props) => {
                 open={openModalUpdate}
                 onOk={() => { form.submit() }}
                 onCancel={() => {
+                    setOpenModalUpdate(false);
                     form.resetFields();
-                    setInitForm(null)
+                    setInitForm(null);
                     setDataUpdate(null);
-                    setOpenModalUpdate(false)
+
                 }}
                 okText={"Cập nhật"}
                 cancelText={"Hủy"}
@@ -293,14 +292,28 @@ const ProductModalUpdate = (props) => {
                             </Form.Item>
                         </Col>
                         <Col span={8}>
-                            <Form.Item
+                            {/* <Form.Item
                                 labelCol={{ span: 24 }}
                                 label="Active"
                                 name="active"
+                                valuePropName="checked"
+                                initialValue
                             >
                                 <Space direction="vertical">
-                                    <Switch checkedChildren="TRUE" unCheckedChildren="FALSE" defaultChecked />
+                                    <Switch name="switch" checkedChildren="YES" unCheckedChildren="NO" />
                                 </Space>
+                            </Form.Item> */}
+
+                            <Form.Item
+                                labelCol={{ span: 24 }}
+                                name="switch"
+                                label="Active"
+                                valuePropName="checked"
+                                initialValue>
+                                <Switch
+                                    checkedChildren="YES"
+                                    unCheckedChildren="NO"
+                                />
                             </Form.Item>
                         </Col>
                         <Col span={12}>

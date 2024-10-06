@@ -12,12 +12,14 @@ import { Link, useNavigate } from 'react-router-dom';
 
 const ViewDetail = (props) => {
     const { dataBook } = props;
+    
     const [isOpenModalGallery, setIsOpenModalGallery] = useState(false);
     const [currentIndex, setCurrentIndex] = useState(0);
 
     const [currentQuantity, setCurrentQuantity] = useState(1);
     const refGallery = useRef(null);
     const images = dataBook?.items ?? [];
+    
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -51,7 +53,7 @@ const ViewDetail = (props) => {
     }
 
     const handleAddToCart = (quantity, book) => {
-        dispatch(doAddBookAction({ quantity, detail: book, _id: book._id }))
+        dispatch(doAddBookAction({ quantity, detail: book, id: book.id }))
     }
 
     const handleBuyNow = (quantity, book) => {
@@ -78,7 +80,7 @@ const ViewDetail = (props) => {
                     ]}
                 />
                 <div style={{ padding: "20px", background: '#fff', borderRadius: 5 }}>
-                    {dataBook && dataBook._id ?
+                    {dataBook && dataBook.id ?
                         <Row gutter={[20, 20]}>
                             <Col md={10} sm={0} xs={0}>
                                 <ImageGallery
@@ -105,8 +107,8 @@ const ViewDetail = (props) => {
                                     />
                                 </Col>
                                 <Col span={24}>
-                                    <div className='author'>Tác giả: <a href='#'>{dataBook?.author}</a> </div>
-                                    <div className='title'>{dataBook?.mainText}</div>
+                                    {/* <div className='author'>Tác giả: <a href='#'>{dataBook?.author}</a> </div> */}
+                                    <div className='title'>{dataBook?.name}</div>
                                     <div className='rating'>
                                         <Rate value={5} disabled style={{ color: '#ffce3d', fontSize: 12 }} />
                                         <span className='sold'>
