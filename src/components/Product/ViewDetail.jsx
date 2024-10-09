@@ -1,4 +1,4 @@
-import { Row, Col, Rate, Divider, Button, Breadcrumb } from 'antd';
+import { Row, Col, Rate, Divider, Button, Breadcrumb, Modal, Image, Form, Input, message } from 'antd';
 import './book.scss';
 import ImageGallery from 'react-image-gallery';
 import { useRef, useState } from 'react';
@@ -6,24 +6,54 @@ import ModalGallery from './ModalGallery';
 import { MinusOutlined, PlusOutlined, HomeOutlined } from '@ant-design/icons';
 import { BsCartPlus } from 'react-icons/bs';
 import BookLoader from './BookLoader';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { doAddBookAction } from '../../redux/order/orderSlice'
 import { Link, useNavigate } from 'react-router-dom';
+import Reviews from './Reviews';
+import { createReviews } from '../../services/api';
 
 const ViewDetail = (props) => {
     const { dataBook } = props;
-    
+    const [form] = Form.useForm();
+
+    const user = useSelector(state => state.account.user);
+
     const [isOpenModalGallery, setIsOpenModalGallery] = useState(false);
     const [currentIndex, setCurrentIndex] = useState(0);
+    const [isLoading, setIsLoading] = useState(false);
 
     const [currentQuantity, setCurrentQuantity] = useState(1);
     const refGallery = useRef(null);
     const images = dataBook?.items ?? [];
-    
+
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [currentValue, setCurrentValue] = useState(2)
+    const desc = ['Rất tệ', 'Tệ', 'Tạm ổn', 'Tốt', 'Rất tốt'];
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
+    const onFinish = async (values) => {
+        setIsLoading(true);
+        const data = {
+            product: {
+                id: dataBook.id
+            },
+            user: {
+                id: user.id
+            },
+            rate: currentValue,
+            content: values.text
+        }
+        const res = await createReviews(data);
+        if (res && res.data) {
+            message.success('Tạo mới bình luận thành công');
+            form.resetFields();
+            setIsModalOpen(false);
+        }
+        setIsLoading(false);
+
+    }
     const handleOnClickImage = () => {
         //get current index onClick
         // alert(refGallery?.current?.getCurrentIndex());
@@ -64,7 +94,7 @@ const ViewDetail = (props) => {
         <div style={{ background: '#efefef', padding: "20px 0" }}>
             <div className='view-detail-book' style={{ maxWidth: 1440, margin: '0 auto', minHeight: "calc(100vh - 150px)" }}>
                 <Breadcrumb
-                    style={{ margin: '5px 0' }}
+                    style={{ margin: '5px 10px' }}
                     items={[
                         {
                             // href: '#',
@@ -151,6 +181,76 @@ const ViewDetail = (props) => {
                         <BookLoader />
                     }
                 </div>
+            </div>
+            <div style={{ background: '#fff', padding: "20px 0", margin: '20px 0' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                    <h3>Đánh giá sản phẩm này</h3>
+                    <p>Nếu đã mua sản phẩm này. Hãy đánh giá ngay để giúp hàng ngàn người chọn mua hàng tốt nhất bạn nhé!</p>
+                    <Rate
+                        style={{ fontSize: '300%' }}
+                        tooltips={desc}
+                        onChange={(value) => {
+                            setCurrentValue(value);
+                            setIsModalOpen(true);
+                        }}
+                        value={currentValue}
+                    />
+                    {currentValue ? <span>{desc[currentValue - 1]}</span> : null}
+                </div>
+                <Modal
+                    title="Đánh giá sản phẩm"
+                    open={isModalOpen}
+                    onOk={() => { form.submit() }}
+                    onCancel={() => {
+                        form.resetFields();
+                        setIsModalOpen(false);
+                    }}
+                    //do not close when click fetchBook
+                    maskClosable={false}
+                >
+                    {/* <Image
+                        width={200}
+                        src="https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png"
+                    /> */}
+                    <Form
+                        form={form}
+                        name="basic"
+                        onFinish={onFinish}
+                        autoComplete="off"
+                    >
+                        <Form.Item
+                            labelCol={{ span: 24 }} //whole column
+                            label="Nội dung đánh giá"
+                            name="text"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Vui lòng nhập nội dung đánh giá!',
+                                },
+                            ]}
+                        >
+                            <Input.TextArea
+                                placeholder="Mời bạn chia sẻ thêm cảm nhận"
+                            />
+                        </Form.Item>
+                        <Form.Item>
+                            <div style={{ textAlign: 'center' }}>
+                                <Rate
+                                    disabled
+                                    style={{ fontSize: '300%' }}
+                                    tooltips={desc}
+                                    value={currentValue}
+                                />
+                                <br />
+                                {currentValue ? <span>{desc[currentValue - 1]}</span> : null}
+                            </div>
+                        </Form.Item>
+                    </Form>
+                </Modal>
+            </div>
+            <div style={{ background: '#fff', padding: "20px 100px", margin: '20px 0' }}>
+                <h3 style={{ textAlign: 'center' }}>Đánh giá của khách hàng đối với sản phẩm {dataBook?.name}</h3>
+                <Reviews />
             </div>
             <ModalGallery
                 isOpen={isOpenModalGallery}

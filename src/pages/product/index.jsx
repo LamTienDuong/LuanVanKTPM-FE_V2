@@ -48,7 +48,6 @@ const ProductPage = () => {
                 )
             })
         }
-        console.log(images);
         
         return images;
     }

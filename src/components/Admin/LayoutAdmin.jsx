@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     AppstoreOutlined,
     ExceptionOutlined,
@@ -11,7 +11,7 @@ import {
     DownOutlined,
 } from '@ant-design/icons';
 import { Layout, Menu, Dropdown, Space, message, Avatar } from 'antd';
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { Link } from 'react-router-dom';
 import './layout.scss';
 import { useDispatch, useSelector } from 'react-redux';
@@ -27,11 +27,26 @@ const LayoutAdmin = () => {
     const [collapsed, setCollapsed] = useState(false);
     const [activeMenu, setActiveMenu] = useState('dashboard');
     const user = useSelector(state => state.account.user);
+    const [current, setCurrent] = useState('');
+    const location = useLocation();
 
     const [showManageAccount, setShowManageAccount] = useState(false);
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
+
+    useEffect(() => {        
+        if (location && location.pathname) {
+            const allRoutes = ["users", "products", "orders"];
+            const currentRoute = allRoutes.find(item => `/admin/${item}` === location.pathname);
+            if (currentRoute) {
+                setCurrent(currentRoute);
+            } else {
+                setCurrent("dashboard");
+            }
+        }
+    }, [location])
+
 
     const handleLogout = async () => {
         const res = await callLogout();
@@ -54,8 +69,8 @@ const LayoutAdmin = () => {
             icon: <UserOutlined />,
             children: [
                 {
-                    label: <Link to='/admin/user'>CRUD</Link>,
-                    key: 'crud',
+                    label: <Link to='/admin/users'>CRUD</Link>,
+                    key: 'users',
                     icon: <TeamOutlined />,
                 },
                 // {
@@ -66,13 +81,13 @@ const LayoutAdmin = () => {
             ]
         },
         {
-            label: <Link to='/admin/product'>Manage Product</Link>,
-            key: 'book',
+            label: <Link to='/admin/products'>Manage Product</Link>,
+            key: 'products',
             icon: <ExceptionOutlined />
         },
         {
-            label: <Link to='/admin/order'>Manage Orders</Link>,
-            key: 'order',
+            label: <Link to='/admin/orders'>Manage Orders</Link>,
+            key: 'orders',
             icon: <DollarCircleOutlined />
         },
 
@@ -117,7 +132,7 @@ const LayoutAdmin = () => {
                         Admin
                     </div>
                     <Menu
-                        defaultSelectedKeys={[activeMenu]}
+                        selectedKeys={[current]}
                         mode="inline"
                         items={items}
                         onClick={(e) => setActiveMenu(e.key)}

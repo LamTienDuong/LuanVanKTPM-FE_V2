@@ -149,3 +149,11 @@ export const callFetchDashboard = () => {
 export const callFetchListOrder = (query) => {
     return axios.get(`/api/v1/order?${query}`)
 }
+
+export const createReviews = (data) => {
+    return axios.post(`/api/v1/reviews`, data)
+}
+
+export const findAllReviews = () => {
+    return axios.get(`/api/v1/reviews`);
+}

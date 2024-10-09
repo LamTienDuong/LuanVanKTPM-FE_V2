@@ -12,12 +12,12 @@ const Home = () => {
 
     const [listBook, setListBook] = useState([]);
     const [current, setCurrent] = useState(1);
-    const [pageSize, setPageSize] = useState(5);
+    const [pageSize, setPageSize] = useState(10);
     const [total, setTotal] = useState(0);
 
     const [isLoading, setIsLoading] = useState(false);
     const [filter, setFilter] = useState("");
-    const [sortQuery, setSortQuery] = useState("sort=-sold");
+    const [sortQuery, setSortQuery] = useState("sort=name,asc");
 
     const [showMobileFilter, setShowMobileFilter] = useState(false);
 
@@ -26,7 +26,7 @@ const Home = () => {
 
     useEffect(() => {
         const initCategory = async () => {
-            const res = await callFetchCategory();            
+            const res = await callFetchCategory();
             if (res && res.data) {
                 const d = res.data.result.map(item => {
                     return { label: item.name, value: item.name }
@@ -43,21 +43,22 @@ const Home = () => {
 
     const fetchBook = async () => {
         setIsLoading(true)
-        let query = `current=${current}&pageSize=${pageSize}`;
-        // if (filter) {
-        //     query += `&${filter}`;
-        // }
+        let query = `page=${current}&size=${pageSize}&filter=`;
+
+        if (filter) {
+            query += `${filter}`;
+        }
         // if (sortQuery) {
-        //     query += `&${sortQuery}`;
+        //     query += `${sortQuery}`;
         // }
 
         // if (searchTerm) {
-        //     query += `&mainText=/${searchTerm}/i`;
+        //     query += `name=/${searchTerm}/i`;
         // }
 
         const res = await callFetchListBook(query);
         if (res && res.data) {
-            setListBook(res.data.result);
+            setListBook(res.data.result.filter(item => item.quantity > 0));
             setTotal(res.data.meta.total)
         }
         setIsLoading(false)
@@ -81,8 +82,17 @@ const Home = () => {
         if (changedValues.category) {
             const cate = values.category;
             if (cate && cate.length > 0) {
-                const f = cate.join(',');
-                setFilter(`category=${f}`)
+                let search = '';
+                cate.forEach((item, index) => {
+                    if (index == 0) {
+                        search += `category.name ~ '${item}'`;
+                    } else {
+                        search += ` or category.name ~ '${item}'`;
+                    }
+
+                });
+                // const f = cate.join(' or ');
+                setFilter(search)
             } else {
                 //reset data -> fetch all
                 setFilter('');
@@ -92,13 +102,19 @@ const Home = () => {
     }
 
     const onFinish = (values) => {
-        // console.log('>> check values: ', values)
-
         if (values?.range?.from >= 0 && values?.range?.to >= 0) {
-            let f = `price>=${values?.range?.from}&price<=${values?.range?.to}`;
+            let f = '';
             if (values?.category?.length) {
-                const cate = values?.category?.join(',');
-                f += `&category=${cate}`
+                values.category.forEach((item, index) => {
+                    if (index == 0) {
+                        f += `category.name ~ '${item}'`;
+                    } else {
+                        f += ` or category.name ~ '${item}'`;
+                    }
+                });
+                f += `and price >: ${values?.range?.from} and price <: ${values?.range?.to}`;
+            } else {
+                f += `price >: ${values?.range?.from} and price <: ${values?.range?.to}`;
             }
             setFilter(f);
         }
@@ -106,22 +122,22 @@ const Home = () => {
 
     const items = [
         {
-            key: "sort=-sold",
+            key: "sort=sold,desc",
             label: `Phổ biến`,
             children: <></>,
         },
         {
-            key: 'sort=-updatedAt',
+            key: 'sort=createdAt,desc',
             label: `Hàng Mới`,
             children: <></>,
         },
         {
-            key: 'sort=price',
+            key: 'sort=price,asc',
             label: `Giá Thấp Đến Cao`,
             children: <></>,
         },
         {
-            key: 'sort=-price',
+            key: 'sort=price,desc',
             label: `Giá Cao Đến Thấp`,
             children: <></>,
         },
@@ -168,8 +184,6 @@ const Home = () => {
     }
 
     const handleRedirectBook = (book) => {
-        console.log(book.id);
-        
         // const slug = convertSlug(book.mainText);
         navigate(`/product/id=${book.id}`)
     }
@@ -241,7 +255,7 @@ const Home = () => {
                                         labelCol={{ span: 24 }}
                                     >
                                         <Row gutter={[10, 10]} style={{ width: "100%" }}>
-                                            <Col xl={11} md={24}>
+                                            <Col xl={24} md={24}>
                                                 <Form.Item name={["range", 'from']}>
                                                     <InputNumber
                                                         name='from'
@@ -252,10 +266,10 @@ const Home = () => {
                                                     />
                                                 </Form.Item>
                                             </Col>
-                                            <Col xl={2} md={0}>
-                                                <div > - </div>
-                                            </Col>
-                                            <Col xl={11} md={24}>
+                                            {/* <Col xl={24} md={0}>
+                                                <div > đến </div>
+                                            </Col> */}
+                                            <Col xl={24} md={24}>
                                                 <Form.Item name={["range", 'to']}>
                                                     <InputNumber
                                                         name='to'
@@ -272,32 +286,6 @@ const Home = () => {
                                                 style={{ width: "100%" }} type='primary'>Áp dụng</Button>
                                         </div>
                                     </Form.Item>
-                                    <Divider />
-                                    <Form.Item
-                                        label="Đánh giá"
-                                        labelCol={{ span: 24 }}
-                                    >
-                                        <div>
-                                            <Rate value={5} disabled style={{ color: '#ffce3d', fontSize: 15 }} />
-                                            <span className="ant-rate-text"></span>
-                                        </div>
-                                        <div>
-                                            <Rate value={4} disabled style={{ color: '#ffce3d', fontSize: 15 }} />
-                                            <span className="ant-rate-text">trở lên</span>
-                                        </div>
-                                        <div>
-                                            <Rate value={3} disabled style={{ color: '#ffce3d', fontSize: 15 }} />
-                                            <span className="ant-rate-text">trở lên</span>
-                                        </div>
-                                        <div>
-                                            <Rate value={2} disabled style={{ color: '#ffce3d', fontSize: 15 }} />
-                                            <span className="ant-rate-text">trở lên</span>
-                                        </div>
-                                        <div>
-                                            <Rate value={1} disabled style={{ color: '#ffce3d', fontSize: 15 }} />
-                                            <span className="ant-rate-text">trở lên</span>
-                                        </div>
-                                    </Form.Item>
                                 </Form>
                             </div>
                         </Col>
@@ -307,7 +295,7 @@ const Home = () => {
                                 <div style={{ padding: "20px", background: '#fff', borderRadius: 5 }}>
                                     <Row >
                                         <Tabs
-                                            defaultActiveKey="sort=-sold"
+                                            defaultActiveKey="sort=sold,desc"
                                             items={items}
                                             onChange={(value) => { setSortQuery(value) }}
                                             style={{ overflowX: "auto" }}

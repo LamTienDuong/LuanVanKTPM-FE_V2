@@ -106,7 +106,7 @@ export default function App() {
             </ProtectedRoute>
         },
         {
-          path: "user",
+          path: "users",
           element:
             <ProtectedRoute>
               <ManageUserPage />
@@ -114,7 +114,7 @@ export default function App() {
           ,
         },
         {
-          path: "product",
+          path: "products",
           element:
             <ProtectedRoute>
               <ManageProductPage />
@@ -122,7 +122,7 @@ export default function App() {
           ,
         },
         {
-          path: "order",
+          path: "orders",
           element:
             <ProtectedRoute>
               <AdminOrderPage />

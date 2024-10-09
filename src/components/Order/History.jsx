@@ -7,6 +7,7 @@ import ReactJson from 'react-json-view'
 
 const History = () => {
     const [orderHistory, setOrderHistory] = useState([]);
+    
     useEffect(() => {
         const fetchHistory = async () => {
             const res = await callOrderHistory();
