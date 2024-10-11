@@ -9,7 +9,8 @@ const initialState = {
         fullName: "",
         role: "",
         avatar: "",
-        id: ""
+        id: "",
+        address: []
     },
     tempAvatar: ""
 };

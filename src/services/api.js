@@ -39,7 +39,7 @@ export const callDeleteUser = (id) => {
 
 ///////////////////////
 
-export const callFetchListBook = (query) => {    
+export const callFetchListBook = (query) => {
     return axios.get(`/api/v1/products?${query}`)
 }
 
@@ -50,30 +50,30 @@ export const callFetchCategory = () => {
 
 export const callCreateBook = (thumbnail, slider, name, price, sold, quantity, category) => {
     return axios.post('/api/v1/products', {
-        thumbnail, 
-        slider, 
-        name, 
-        price, 
-        sold, 
-        quantity, 
-        category: {"id": 1},
+        thumbnail,
+        slider,
+        name,
+        price,
+        sold,
+        quantity,
+        category: { "id": 1 },
         isActive: true
     })
 }
 
-export const callUpdateBook = (id, thumbnail, slider, name, price, category, active, quantity, sold) => {    
+export const callUpdateBook = (id, thumbnail, slider, name, price, category, active, quantity, sold) => {
     return axios.put(`/api/v1/products`, {
-        id, 
-        thumbnail, 
-        slider, 
-        name, 
-        price, 
+        id,
+        thumbnail,
+        slider,
+        name,
+        price,
         category: {
             name: category
         },
         active,
-        quantity, 
-        sold, 
+        quantity,
+        sold,
     })
 }
 
@@ -118,21 +118,21 @@ export const callOrderHistory = () => {
 
 export const callUpdateAvatar = (fileImg) => {
     const bodyFormData = new FormData();
-    bodyFormData.append('fileImg', fileImg);
+    bodyFormData.append('file', fileImg);
+    bodyFormData.append('folder', 'avatar');
     return axios({
         method: 'post',
-        url: '/api/v1/file/upload',
+        url: '/api/v1/files',
         data: bodyFormData,
         headers: {
             "Content-Type": "multipart/form-data",
-            "upload-type": "avatar"
         },
     });
 }
 
-export const callUpdateUserInfo = (_id, phone, fullName, avatar) => {
-    return axios.put(`/api/v1/user`, {
-        _id, phone, fullName, avatar
+export const callUpdateUserInfo = (id, name, phone, avatar) => {
+    return axios.put(`/api/v1/users`, {
+        id, name, phone, avatar
     })
 }
 
@@ -156,4 +156,8 @@ export const createReviews = (data) => {
 
 export const findAllReviews = () => {
     return axios.get(`/api/v1/reviews`);
+}
+
+export const createAddress = (data) => {
+    return axios.post(`/api/v1/addresses`, data);
 }

@@ -1,0 +1,19 @@
+.group-button {
+    margin-top: 1rem;
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    
+    #btn-close {
+        background-color: whitesmoke;
+        color: black;
+
+        &:hover {
+            background-color: rgb(214, 202, 202);
+        }
+    }
+}
+
+.number-address {
+    font-size: 1rem;
+}

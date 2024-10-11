@@ -12,7 +12,7 @@ const Home = () => {
 
     const [listBook, setListBook] = useState([]);
     const [current, setCurrent] = useState(1);
-    const [pageSize, setPageSize] = useState(10);
+    const [pageSize, setPageSize] = useState(5);
     const [total, setTotal] = useState(0);
 
     const [isLoading, setIsLoading] = useState(false);
@@ -48,13 +48,19 @@ const Home = () => {
         if (filter) {
             query += `${filter}`;
         }
-        // if (sortQuery) {
-        //     query += `${sortQuery}`;
-        // }
+        if (filter) {
+            if (searchTerm) {
+                query += ` and name ~ '${searchTerm}'`;
+            } else {
+                query += ` and name ~ ''`;
+            }
+        } else {
+            query += `name ~ '${searchTerm}'`;
+        }
 
-        // if (searchTerm) {
-        //     query += `name=/${searchTerm}/i`;
-        // }
+        if (sortQuery) {
+            query += `&${sortQuery}`;
+        }
 
         const res = await callFetchListBook(query);
         if (res && res.data) {
@@ -319,7 +325,7 @@ const Home = () => {
                                                         <div className='thumbnail'>
                                                             <img src={`${import.meta.env.VITE_BACKEND_URL}/images/product/${item.thumbnail}`} alt="thumbnail book" />
                                                         </div>
-                                                        <div className='text' title={item.mainText}>{item.name}</div>
+                                                        <div className='text' title={item.name}>{item.name}</div>
                                                         <div className='price'>
                                                             {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(item?.price ?? 0)}
                                                         </div>

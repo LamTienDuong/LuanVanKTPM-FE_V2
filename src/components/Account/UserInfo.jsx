@@ -9,17 +9,17 @@ const UserInfo = (props) => {
     const [form] = Form.useForm();
     const dispatch = useDispatch();
     const user = useSelector(state => state.account.user);
-    const tempAvatar = useSelector(state => state.account.tempAvatar);
 
     const [userAvatar, setUserAvatar] = useState(user?.avatar ?? "");
     const [isSubmit, setIsSubmit] = useState(false);
 
-    const urlAvatar = `${import.meta.env.VITE_BACKEND_URL}/images/avatar/${tempAvatar || user?.avatar}`;
+    const urlAvatar = `${import.meta.env.VITE_BACKEND_URL}/images/avatar/${userAvatar}`;
+    
 
     const handleUploadAvatar = async ({ file, onSuccess, onError }) => {
         const res = await callUpdateAvatar(file);
         if (res && res.data) {
-            const newAvatar = res.data.fileUploaded;
+            const newAvatar = res.data.fileName;
             dispatch(doUploadAvatarAction({ avatar: newAvatar }))
             setUserAvatar(newAvatar);
             onSuccess('ok')
@@ -45,17 +45,16 @@ const UserInfo = (props) => {
     };
 
     const onFinish = async (values) => {
-        const { fullName, phone, _id } = values;
+        const { id, name, phone } = values;
         setIsSubmit(true)
-        const res = await callUpdateUserInfo(_id, phone, fullName, userAvatar);
-
+        const res = await callUpdateUserInfo(id, name, phone, userAvatar);
         if (res && res.data) {
             //update redux
-            dispatch(doUpdateUserInfoAction({ avatar: userAvatar, phone, fullName }));
+            dispatch(doUpdateUserInfoAction({ avatar: userAvatar, phone, name }));
             message.success("Cập nhật thông tin user thành công");
 
             //force renew token
-            localStorage.removeItem('access_token');
+            // localStorage.removeItem('access_token');
         } else {
             notification.error({
                 message: "Đã có lỗi xảy ra",
@@ -96,7 +95,7 @@ const UserInfo = (props) => {
                             hidden
                             labelCol={{ span: 24 }}
                             label="Email"
-                            name="_id"
+                            name="id"
                             initialValue={user?.id}
 
                         >
@@ -115,8 +114,8 @@ const UserInfo = (props) => {
                         <Form.Item
                             labelCol={{ span: 24 }}
                             label="Tên hiển thị"
-                            name="fullName"
-                            initialValue={user?.fullName}
+                            name="name"
+                            initialValue={user?.name}
                             rules={[{ required: true, message: 'Tên hiển thị không được để trống!' }]}
                         >
                             <Input />

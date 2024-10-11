@@ -51,7 +51,7 @@ export default function App() {
       return;
 
     const res = await callFetchAccount();
-    if (res && res.data) {
+    if (res && res.data && res.data.user) {
       dispatch(doGetAccountAction(res.data))
     }
   }
