@@ -1,22 +1,25 @@
-import { Button, Col, Divider, Form, Input, Row, Select } from "antd"
+import { Button, Col, Divider, Form, Input, message, notification, Popconfirm, Row, Select } from "antd"
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 const { TextArea } = Input;
 import { GoPlus } from "react-icons/go";
 import './Address.scss'
-import { createAddress } from "../../services/api";
+import { callDeleteBook, callFetchAccount, createAddress, deleteAddress } from "../../services/api";
 import { FaPen } from "react-icons/fa";
 import { MdDeleteOutline } from "react-icons/md";
-import { DatabaseFilled, DeleteOutlined, EditOutlined } from "@ant-design/icons";
-import AddressModalCreate from "./AddressModalCreate";
+import { DatabaseFilled, DeleteOutlined, DeleteTwoTone, EditOutlined } from "@ant-design/icons";
+import AddressModalCreate from "./AddressModalUpdate";
+import AddressModalUpdate from "./AddressModalUpdate";
+import { doGetAccountAction } from "../../redux/account/accountSlice";
 
-const Address = () => {
+const Address = (props) => {
+    const { isModalOpenCreate, setIsModalOpenCreate, isModalOpenUpdate, setIsModalOpenUpdate } = props;
     const [form] = Form.useForm();
     const dispatch = useDispatch();
     const user = useSelector(state => state.account.user);
+
     const [isSubmit, setIsSubmit] = useState(false);
-    const [isModalOpen, setIsModalOpen] = useState(true);
 
     const [isModalUpdateOpen, setIsModalUpdateOpen] = useState(false);
     const [dataUpdate, setDataUpdate] = useState(null);
@@ -80,11 +83,12 @@ const Address = () => {
     }
 
     const handleUpdateAddress = (data) => {
-        setDataUpdate(data)
+        setDataUpdate(data);
     }
 
 
     const onFinish = async (values) => {
+        setIsSubmit(true);
         const provinceName = (await axios.get(`https://provinces.open-api.vn/api/p/${values.province}`)).data.name;
         const districtName = (await axios.get(`https://provinces.open-api.vn/api/d/${values.district}`)).data.name;
         const wardName = (await axios.get(`https://provinces.open-api.vn/api/w/${values.ward}`)).data.name;
@@ -99,43 +103,77 @@ const Address = () => {
                 id: user.id
             }
         }
-        const res = await createAddress(data);
 
+        const res = await createAddress(data);
+        if (res && res.data) {
+            setIsModalOpenCreate(false);
+            form.resetFields();
+            const account = await callFetchAccount();
+            if (account && account.data && account.data.user) {
+                dispatch(doGetAccountAction(account.data));
+            }
+            message.success('Thêm mới địa chỉ thành công');
+        } else {
+            notification.error({
+                message: 'Đã có lỗi xảy ra',
+                description: res.message
+            })
+        }
+        setIsSubmit(false);
     }
 
+
+    const handleDeleteAddress = async (id) => {
+        const res = await deleteAddress(id);
+        if (res && res.statusCode == 200) {
+            message.success('Xóa địa chỉ thành công');
+            const account = await callFetchAccount();
+            if (account && account.data && account.data.user) {
+                dispatch(doGetAccountAction(account.data));
+            }
+        } else {
+            notification.error({
+                message: 'Có lỗi xảy ra',
+                description: res.message
+            });
+        }
+    };
 
     return (
         <>
             <div style={{ minHeight: 400 }}>
-                <Row>
-                    <div style={{
-                        fontSize: '1.125rem',
-                        width: '100%',
-                        display: 'flex',
-                        justifyContent: 'space-between'
-                    }}>
-                        <p>Địa chỉ của tôi</p>
-                        <Button
-                            style={{
-                                background: '#EE4D2D',
-                                color: 'white',
-                            }}
-                            onClick={() => setIsModalOpen(true)}
-                            variant="solid">
-                            Thêm mới địa chỉ
-                        </Button>
-                    </div>
-                    <Divider />
-                </Row>
-                {!isModalOpen && !isModalUpdateOpen &&
-                    user.address.map((item, index) => {
+                {!isModalOpenCreate && !isModalUpdateOpen &&
+                    <Row>
+                        <div style={{
+                            fontSize: '1.125rem',
+                            width: '100%',
+                            display: 'flex',
+                            justifyContent: 'space-between'
+                        }}>
+                            <p>Địa chỉ của tôi</p>
+                            <Button
+                                style={{
+                                    background: '#EE4D2D',
+                                    color: 'white',
+                                }}
+                                onClick={() => setIsModalOpenCreate(true)}
+                                variant="solid">
+                                Thêm mới địa chỉ
+                            </Button>
+                        </div>
+                        <Divider />
+                    </Row>
+                }
+                {!isModalOpenCreate && !isModalUpdateOpen &&
+                    user?.address?.map((item, index) => {
                         return (
                             <Row>
                                 <Col span={4}>
                                     <a href="#" className="number-address">{`${item.phone}`}</a>
                                 </Col>
                                 <Col span={17}>
-                                    <p>{`${item.detail}, ${item.ward}, ${item.district}, ${item.province} ${!item.active ? 'Mặc định' : ''}`}</p>
+                                    <p>{`${item.detail}, ${item.ward}, ${item.district}, ${item.province}`}</p>
+                                    {item.active ? <span>Mặc định</span> : ''}
                                 </Col>
                                 <Col
                                     span={3}
@@ -148,16 +186,31 @@ const Address = () => {
                                         }
                                         }
                                     />
-                                    <DeleteOutlined style={{ color: 'red', fontSize: '1.25rem', cursor: 'pointer' }} />
+                                    {/* <DeleteOutlined style={{ color: 'red', fontSize: '1.25rem', cursor: 'pointer' }} /> */}
+                                    <Popconfirm
+                                        placement="leftTop"
+                                        title={"Xác nhận xóa địa chỉ"}
+                                        description={"Bạn có chắc chắn muốn xóa địa chỉ này ?"}
+                                        onConfirm={() => handleDeleteAddress(item.id)}
+                                        okText="Xác nhận"
+                                        cancelText="Hủy"
+                                    >
+                                        <span style={{ cursor: "pointer", margin: "0 20px" }}>
+                                            <DeleteTwoTone
+                                                style={{ color: 'blue', fontSize: '1.25rem', cursor: 'pointer' }}
+                                                twoToneColor="#ff4d4f" />
+                                        </span>
+                                    </Popconfirm>
                                 </Col>
                                 <Divider />
                             </Row>
                         )
                     })
                 }
-                {isModalOpen &&
+                {isModalOpenCreate &&
                     <Row>
                         <Col sm={24} md={24}>
+                            <h3 style={{ textAlign: 'center' }}>Thêm mới địa chỉ</h3>
                             <Form
                                 onFinish={onFinish}
                                 form={form}
@@ -249,7 +302,7 @@ const Address = () => {
                                         type="primary"
                                         loading={isSubmit}
                                         onClick={() => {
-                                            setIsModalOpen(false);
+                                            setIsModalOpenCreate(false);
                                             form.resetFields();
                                         }
                                         }
@@ -267,7 +320,7 @@ const Address = () => {
                     </Row>
                 }
                 {isModalUpdateOpen &&
-                    <AddressModalCreate
+                    <AddressModalUpdate
                         isModalUpdateOpen={isModalUpdateOpen}
                         setIsModalUpdateOpen={setIsModalUpdateOpen}
                         dataUpdate={dataUpdate}

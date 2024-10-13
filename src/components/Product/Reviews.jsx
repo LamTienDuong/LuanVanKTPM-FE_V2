@@ -4,31 +4,12 @@ import { useEffect, useState } from 'react';
 import { findAllReviews } from '../../services/api';
 
 const Reviews = () => {
-    const [listReviews, setListReviews] = useState([]);
-    const [current, setCurrent] = useState(1);
-    const [pageSize, setPageSize] = useState(5);
-    const [total, setTotal] = useState(0);
+   
 
     const [position, setPosition] = useState('bottom');
     const [align, setAlign] = useState('center');
 
-    useEffect(() => {
-        fetchReviews();
-    }, [current, pageSize])
-
-    const fetchReviews = async () => {
-        const res = await findAllReviews();
-        if (res && res.data) {
-            const data = res.data.result.map(item => {
-                return {
-                    avatar: item.user.avatar,
-                    title: item.user.name,
-                    description: item.content
-                }
-            })
-            setListReviews(data)
-        }
-    }
+    
 
     return (
         <>

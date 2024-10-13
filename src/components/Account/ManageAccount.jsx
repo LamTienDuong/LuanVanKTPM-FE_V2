@@ -2,14 +2,24 @@ import { Modal, Tabs } from "antd";
 import UserInfo from "./UserInfo";
 import ChangePassword from "./ChangePassword";
 import Address from "./Address";
+import { useState } from "react";
 
 const ManageAccount = (props) => {
     const { isModalOpen, setIsModalOpen } = props;
+    const [isModalOpenCreate, setIsModalOpenCreate] = useState(false);
+    const [isModalOpenUpdate, setIsModalOpenUpdate] = useState(false);
+
+    const onCancel = () => {
+        setIsModalOpen(false);
+        setIsModalOpenCreate(false);
+        setIsModalOpenUpdate(false);
+    }
+
 
     const items = [
         {
             key: 'info',
-            label: `Cập nhật thông tin`,
+            label: `Hồ sơ cá nhân`,
             children: <UserInfo />,
         },
         {
@@ -19,8 +29,12 @@ const ManageAccount = (props) => {
         },
         {
             key: 'address',
-            label: `Cập nhật địa chỉ`,
-            children: <Address />,
+            label: `Địa chỉ`,
+            children: <Address
+                isModalOpenCreate={isModalOpenCreate} 
+                setIsModalOpenCreate={setIsModalOpenCreate}
+                isModalOpenUpdate={isModalOpenUpdate}
+                setIsModalOpenUpdate={setIsModalOpenUpdate}/>,
         },
 
     ];
@@ -31,10 +45,10 @@ const ManageAccount = (props) => {
             title="Quản lý tài khoản"
             open={isModalOpen}
             footer={null}
-            onCancel={() => setIsModalOpen(false)}
+            onCancel={onCancel}
             maskClosable={false}
             width={"60vw"}
-            style={{top: 20}}
+            style={{ top: 20 }}
         >
             <Tabs
                 defaultActiveKey="info"

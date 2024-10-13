@@ -15,8 +15,12 @@ import { createReviews } from '../../services/api';
 const ViewDetail = (props) => {
     const { dataBook } = props;
     const [form] = Form.useForm();
-
     const user = useSelector(state => state.account.user);
+
+    const [current, setCurrent] = useState(1);
+    const [pageSize, setPageSize] = useState(5);
+    const [total, setTotal] = useState(0);
+    const [listReviews, setListReviews] = useState([]);
 
     const [isOpenModalGallery, setIsOpenModalGallery] = useState(false);
     const [currentIndex, setCurrentIndex] = useState(0);
@@ -32,6 +36,24 @@ const ViewDetail = (props) => {
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
+
+    useEffect(() => {
+        fetchReviews();
+    }, [current, pageSize])
+
+    const fetchReviews = async () => {
+        const res = await findAllReviews();
+        if (res && res.data) {
+            const data = res.data.result.map(item => {
+                return {
+                    avatar: item.user.avatar,
+                    title: item.user.name,
+                    description: item.content
+                }
+            })
+            setListReviews(data)
+        }
+    }
 
     const onFinish = async (values) => {
         setIsLoading(true);

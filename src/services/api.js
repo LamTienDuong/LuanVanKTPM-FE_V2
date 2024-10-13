@@ -161,3 +161,11 @@ export const findAllReviews = () => {
 export const createAddress = (data) => {
     return axios.post(`/api/v1/addresses`, data);
 }
+
+export const updateAddress = (data) => {
+    return axios.put(`/api/v1/addresses`, data);
+}
+
+export const deleteAddress = (id) => {
+    return axios.delete(`/api/v1/addresses/${id}`);
+}
