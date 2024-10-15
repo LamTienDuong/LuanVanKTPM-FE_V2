@@ -1,7 +1,7 @@
 import { Row, Col, Rate, Divider, Button, Breadcrumb, Modal, Image, Form, Input, message } from 'antd';
 import './book.scss';
 import ImageGallery from 'react-image-gallery';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import ModalGallery from './ModalGallery';
 import { MinusOutlined, PlusOutlined, HomeOutlined } from '@ant-design/icons';
 import { BsCartPlus } from 'react-icons/bs';
@@ -10,12 +10,15 @@ import { useDispatch, useSelector } from 'react-redux';
 import { doAddBookAction } from '../../redux/order/orderSlice'
 import { Link, useNavigate } from 'react-router-dom';
 import Reviews from './Reviews';
-import { createReviews } from '../../services/api';
+import { createReviews, findAllReviews } from '../../services/api';
 
 const ViewDetail = (props) => {
     const { dataBook } = props;
     const [form] = Form.useForm();
     const user = useSelector(state => state.account.user);
+
+    const url = window.location.href; 
+    const id = url.split('id=')[1]; 
 
     const [current, setCurrent] = useState(1);
     const [pageSize, setPageSize] = useState(5);
@@ -31,27 +34,42 @@ const ViewDetail = (props) => {
     const images = dataBook?.items ?? [];
 
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [currentValue, setCurrentValue] = useState(2)
+    const [currentValue, setCurrentValue] = useState(0)
     const desc = ['Rất tệ', 'Tệ', 'Tạm ổn', 'Tốt', 'Rất tốt'];
+    const [star, setStar] = useState(0);
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
     useEffect(() => {
         fetchReviews();
-    }, [current, pageSize])
+    }, [current, pageSize]);
+
+
+    useEffect(() => {
+        if (listReviews) {
+            let star = 0;
+            listReviews.forEach(item => {
+                star += +item.rate;
+            });
+            star = Math.round(star / listReviews.length);
+            setStar(star);
+        }
+    }, [listReviews])
 
     const fetchReviews = async () => {
-        const res = await findAllReviews();
-        if (res && res.data) {
+        const res = await findAllReviews(current, pageSize, id);
+        if (res && res.data && res.data.result) {
+            setTotal(res.data.meta.total);
             const data = res.data.result.map(item => {
                 return {
                     avatar: item.user.avatar,
                     title: item.user.name,
-                    description: item.content
+                    description: item.content,
+                    rate: item.rate
                 }
-            })
-            setListReviews(data)
+            });
+            setListReviews(data);
         }
     }
 
@@ -72,6 +90,7 @@ const ViewDetail = (props) => {
             message.success('Tạo mới bình luận thành công');
             form.resetFields();
             setIsModalOpen(false);
+            await fetchReviews();
         }
         setIsLoading(false);
 
@@ -112,6 +131,21 @@ const ViewDetail = (props) => {
         dispatch(doAddBookAction({ quantity, detail: book, _id: book._id }))
         navigate('/order');
     }
+
+    const onChange = (pagination, filters, sorter, extra) => {
+        // if (pagination && pagination.current !== current) {
+        //     setCurrent(pagination.current)
+        // }
+        // if (pagination && pagination.pageSize !== pageSize) {
+        //     setPageSize(pagination.pageSize)
+        //     setCurrent(1);
+        // }
+        // if (sorter && sorter.field) {
+        //     const q = sorter.order === 'ascend' ? `sort=${sorter.field}` : `sort=-${sorter.field}`;
+        //     setSortQuery(q);
+        // }
+    };
+
     return (
         <div style={{ background: '#efefef', padding: "20px 0" }}>
             <div className='view-detail-book' style={{ maxWidth: 1440, margin: '0 auto', minHeight: "calc(100vh - 150px)" }}>
@@ -162,7 +196,7 @@ const ViewDetail = (props) => {
                                     {/* <div className='author'>Tác giả: <a href='#'>{dataBook?.author}</a> </div> */}
                                     <div className='title'>{dataBook?.name}</div>
                                     <div className='rating'>
-                                        <Rate value={5} disabled style={{ color: '#ffce3d', fontSize: 12 }} />
+                                        <Rate value={star} disabled style={{ color: '#ffce3d', fontSize: 12 }} />
                                         <span className='sold'>
                                             <Divider type="vertical" />
                                             Đã bán {dataBook.sold}</span>
@@ -272,7 +306,13 @@ const ViewDetail = (props) => {
             </div>
             <div style={{ background: '#fff', padding: "20px 100px", margin: '20px 0' }}>
                 <h3 style={{ textAlign: 'center' }}>Đánh giá của khách hàng đối với sản phẩm {dataBook?.name}</h3>
-                <Reviews />
+                <Reviews
+                    current={current}
+                    setCurrent={setCurrent}
+                    pageSize={pageSize}
+                    total={total}
+                    listReviews={listReviews}
+                />
             </div>
             <ModalGallery
                 isOpen={isOpenModalGallery}

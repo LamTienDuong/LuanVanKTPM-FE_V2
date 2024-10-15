@@ -172,8 +172,7 @@ const Address = (props) => {
                                     <a href="#" className="number-address">{`${item.phone}`}</a>
                                 </Col>
                                 <Col span={17}>
-                                    <p>{`${item.detail}, ${item.ward}, ${item.district}, ${item.province}`}</p>
-                                    {item.active ? <span>Mặc định</span> : ''}
+                                    <p>{`${item.detail}, ${item.ward}, ${item.district}, ${item.province}`}{item.active ? <span> ( Mặc định )</span> : ''}</p>
                                 </Col>
                                 <Col
                                     span={3}

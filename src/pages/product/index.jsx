@@ -7,7 +7,6 @@ const ProductPage = () => {
     const [dataBook, setDataBook] = useState()
     const url = window.location.href; 
     const id = url.split('id=')[1]; 
-        
 
     useEffect(() => {
         fetchBook(id);

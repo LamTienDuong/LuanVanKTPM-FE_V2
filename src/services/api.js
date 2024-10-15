@@ -56,7 +56,7 @@ export const callCreateBook = (thumbnail, slider, name, price, sold, quantity, c
         price,
         sold,
         quantity,
-        category: { "id": 1 },
+        category: { "id": category },
         isActive: true
     })
 }
@@ -154,8 +154,8 @@ export const createReviews = (data) => {
     return axios.post(`/api/v1/reviews`, data)
 }
 
-export const findAllReviews = () => {
-    return axios.get(`/api/v1/reviews`);
+export const findAllReviews = (current, pageSize, id) => {
+    return axios.get(`/api/v1/reviews?page=${current}&size=${pageSize}&id=${id}`);
 }
 
 export const createAddress = (data) => {

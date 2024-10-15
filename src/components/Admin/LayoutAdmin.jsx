@@ -115,7 +115,7 @@ const LayoutAdmin = () => {
     ];
 
     // const urlAvatar = `${import.meta.env.VITE_BACKEND_URL}/images/avatar/${user?.avatar}`;
-    const urlAvatar = `${import.meta.env.VITE_BACKEND_URL}/images/avatar/avatar.png`;
+    const urlAvatar = `${import.meta.env.VITE_BACKEND_URL}/images/avatar/${user.avatar}`;
 
     return (
         <>
@@ -156,9 +156,6 @@ const LayoutAdmin = () => {
                     <Content style={{ padding: '15px' }}>
                         <Outlet />
                     </Content>
-                    {/* <Footer style={{ padding: 0 }}>
-                    React Test Fresher &copy; Hỏi Dân IT - Made with <HeartTwoTone />
-                </Footer> */}
                 </Layout>
             </Layout>
             <ManageAccount
