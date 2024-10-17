@@ -1,4 +1,4 @@
-import { Row, Col, Rate, Divider, Button, Breadcrumb, Modal, Image, Form, Input, message } from 'antd';
+import { Row, Col, Rate, Divider, Button, Breadcrumb, Modal, Image, Form, Input, message, Radio } from 'antd';
 import './book.scss';
 import ImageGallery from 'react-image-gallery';
 import { useEffect, useRef, useState } from 'react';
@@ -17,8 +17,8 @@ const ViewDetail = (props) => {
     const [form] = Form.useForm();
     const user = useSelector(state => state.account.user);
 
-    const url = window.location.href; 
-    const id = url.split('id=')[1]; 
+    const url = window.location.href;
+    const id = url.split('id=')[1];
 
     const [current, setCurrent] = useState(1);
     const [pageSize, setPageSize] = useState(5);
@@ -37,6 +37,26 @@ const ViewDetail = (props) => {
     const [currentValue, setCurrentValue] = useState(0)
     const desc = ['Rất tệ', 'Tệ', 'Tạm ổn', 'Tốt', 'Rất tốt'];
     const [star, setStar] = useState(0);
+    const [size, setSize] = useState('S');
+
+    const options = [
+        {
+            label: 'S',
+            value: 'S',
+        },
+        {
+            label: 'M',
+            value: 'M',
+        },
+        {
+            label: 'L',
+            value: 'L',
+        },
+        {
+            label: 'XL',
+            value: 'XL',
+        },
+    ];
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -123,8 +143,8 @@ const ViewDetail = (props) => {
         }
     }
 
-    const handleAddToCart = (quantity, book) => {
-        dispatch(doAddBookAction({ quantity, detail: book, id: book.id }))
+    const handleAddToCart = (quantity, size, book) => {
+        dispatch(doAddBookAction({ quantity, size: size, detail: book, id: book.id }))
     }
 
     const handleBuyNow = (quantity, book) => {
@@ -198,7 +218,14 @@ const ViewDetail = (props) => {
                                     <div className='rating'>
                                         <Rate value={star} disabled style={{ color: '#ffce3d', fontSize: 12 }} />
                                         <span className='sold'>
-                                            <Divider type="vertical" />
+                                            <Divider type="vertical" style={{
+                                                borderColor: '#7cb305',
+                                            }} />
+                                            {listReviews.length} lượt đánh giá</span>
+                                        <span className='sold'>
+                                            <Divider type="vertical" style={{
+                                                borderColor: '#7cb305',
+                                            }} />
                                             Đã bán {dataBook.sold}</span>
                                     </div>
                                     <div className='price'>
@@ -220,8 +247,21 @@ const ViewDetail = (props) => {
                                             <button onClick={() => handleChangeButton('PLUS')}><PlusOutlined /></button>
                                         </span>
                                     </div>
+                                    <div className='quantity'>
+                                        <span className='left-side'>Kích thước</span>
+                                        <span className='right-side'>
+                                            <Radio.Group
+                                                block
+                                                options={options}
+                                                defaultValue="S"
+                                                optionType="button"
+                                                buttonStyle="solid"
+                                                onChange={(event) => { setSize(event.target.value); }}
+                                            />
+                                        </span>
+                                    </div>
                                     <div className='buy'>
-                                        <button className='cart' onClick={() => handleAddToCart(currentQuantity, dataBook)}>
+                                        <button className='cart' onClick={() => handleAddToCart(currentQuantity, size, dataBook)}>
                                             <BsCartPlus className='icon-cart' />
                                             <span>Thêm vào giỏ hàng</span>
                                         </button>

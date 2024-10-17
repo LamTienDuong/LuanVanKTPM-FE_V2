@@ -23,52 +23,61 @@ const Payment = (props) => {
     const [districtCode, setDistrictCode] = useState(null);
     const [ward, setWard] = useState([]);
 
+    const [provinceName, setProvinceName] = useState('');
+    const [districtName, setDistrictName] = useState('');
+    const [wardName, setWardName] = useState('');
+
 
 
     useEffect(() => {
-        const getProvince = async () => {
-            const res = await axios.get('https://provinces.open-api.vn/api/p/');
-            if (res && res.data) {
-                const provinces = res.data.map(item => {
-                    return { label: item.name, value: item.code }
-                });
-                setProvince(provinces)
-            }
-        }
         getProvince();
     }, []);
 
     useEffect(() => {
         setDistrict([]);
         if (provinceCode) {
-            const getDistrict = async () => {
-                const res = await axios.get(`https://provinces.open-api.vn/api/p/${provinceCode}?depth=2`);
-                if (res && res.data && res.data.districts) {
-                    const districts = res.data.districts.map(item => {
-                        return { label: item.name, value: item.code }
-                    });
-                    setDistrict(districts);
-                }
-            }
             getDistrict();
         }
     }, [provinceCode]);
 
     useEffect(() => {
         if (districtCode) {
-            const getWard = async () => {
-                const res = await axios.get(`https://provinces.open-api.vn/api/d/${districtCode}?depth=2`);
-                if (res && res.data && res.data.wards) {
-                    const wards = res.data.wards.map(item => {
-                        return { label: item.name, value: item.code }
-                    });
-                    setWard(wards);
-                }
-            }
             getWard();
         }
     }, [districtCode]);
 
+    const getProvince = async () => {
+        // const res = await axios.get('https://provinces.open-api.vn/api/p/');
+        const res = await axios.get('https://vapi.vnappmob.com/api/province/');
+        if (res && res.data) {
+            const provinces = res.data.results.map(item => {
+                return { label: item.province_name, value: item.province_id }
+            });
+            setProvince(provinces)
+        }
+    }
+
+    const getDistrict = async () => {
+        // const res = await axios.get(`https://provinces.open-api.vn/api/p/${provinceCode}?depth=2`);
+        const res = await axios.get(`https://vapi.vnappmob.com/api/province/district/${provinceCode}`);
+        if (res && res.data) {
+            const districts = res.data.results.map(item => {
+                return { label: item.district_name, value: item.district_id }
+            });
+            setDistrict(districts);
+        }
+    }
+
+    const getWard = async () => {
+        // const res = await axios.get(`https://provinces.open-api.vn/api/d/${districtCode}?depth=2`);
+        const res = await axios.get(`https://vapi.vnappmob.com/api/province/ward/${districtCode}`);
+        if (res && res.data) {
+            const wards = res.data.results.map(item => {
+                return { label: item.ward_name, value: item.ward_id }
+            });
+            setWard(wards);
+        }
+    }
 
     const handleChangeProvince = (value) => {
         setProvinceCode(value);
@@ -104,21 +113,29 @@ const Payment = (props) => {
     }
 
     const onFinish = async (values) => {
-        const provinceName = (await axios.get(`https://provinces.open-api.vn/api/p/${values.province}`)).data.name;
-        const districtName = (await axios.get(`https://provinces.open-api.vn/api/d/${values.district}`)).data.name;
-        const wardName = (await axios.get(`https://provinces.open-api.vn/api/w/${values.ward}`)).data.name;
+        const provinceList = (await axios.get('https://vapi.vnappmob.com/api/province/'));
+        const provinceName = provinceList.data.results.filter((province) => province.province_id === values.province);
+        
+        const districtList = (await axios.get(`https://vapi.vnappmob.com/api/province/district/${provinceCode}`));
+        const districtName = districtList.data.results.filter((district) => district.district_id === values.district);
+        
+        const wardList = (await axios.get(`https://vapi.vnappmob.com/api/province/ward/${districtCode}`));
+        const wardName = wardList.data.results.filter((ward) => ward.ward_id === values.ward);
 
-        const address = `${values.address}, ${wardName}, ${districtName}, ${provinceName}`;
+        // const provinceName = (await axios.get(`https://provinces.open-api.vn/api/p/${values.province}`)).data.name;
+        // const districtName = (await axios.get(`https://provinces.open-api.vn/api/d/${values.district}`)).data.name;
+        // const wardName = (await axios.get(`https://provinces.open-api.vn/api/w/${values.ward}`)).data.name;
+
+        const address = `${values.address}, ${wardName[0].ward_name}, ${districtName[0].district_name}, ${provinceName[0].province_name}`;
 
         setIsSubmit(true);
-
         let detailOrder = [];
-
         for (const item of carts) {
             let data = {
                 name: item.detail.name,
                 price: item.detail.price,
                 quantity: item.quantity,
+                size: item.size,
                 product: {
                     id: item.detail.id
                 }
@@ -137,6 +154,7 @@ const Payment = (props) => {
             userId: user.id,
             items: detailOrder
         }
+        
         const res = await callPlaceOrder(data);
         if (res && res.data) {
             message.success('Đặt hàng thành công !');
@@ -162,6 +180,9 @@ const Payment = (props) => {
                                 <img src={`${import.meta.env.VITE_BACKEND_URL}/images/product/${book?.detail?.thumbnail}`} />
                                 <div className='title'>
                                     {book?.detail?.name}
+                                </div>
+                                <div className='size'>
+                                    <span>Size: {book?.size}</span>
                                 </div>
                                 <div className='price'>
                                     {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(currentBookPrice)}
@@ -196,7 +217,7 @@ const Payment = (props) => {
                             labelCol={{ span: 24 }}
                             label="Tên người nhận"
                             name="name"
-                            initialValue={user?.fullName}
+                            initialValue={user?.name}
                             rules={[{ required: true, message: 'Tên người nhận không được để trống!' }]}
                         >
                             <Input />

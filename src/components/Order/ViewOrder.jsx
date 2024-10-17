@@ -40,6 +40,9 @@ const ViewOrder = (props) => {
                                 <div className='title'>
                                     {book?.detail?.name}
                                 </div>
+                                <div className='size'>
+                                    <span>Size: {book?.size}</span>
+                                </div>
                                 <div className='price'>
                                     {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(currentBookPrice)}
                                 </div>
@@ -53,7 +56,7 @@ const ViewOrder = (props) => {
                                 </div>
                                 <DeleteTwoTone
                                     style={{ cursor: "pointer" }}
-                                    onClick={() => dispatch(doDeleteItemCartAction({ _id: book._id }))}
+                                    onClick={() => dispatch(doDeleteItemCartAction({ id: book.id }))}
                                     twoToneColor="#eb2f96"
                                 />
 

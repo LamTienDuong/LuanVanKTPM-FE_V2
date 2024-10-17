@@ -28,7 +28,7 @@ export const orderSlice = createSlice({
                     carts[isExistIndex].quantity = carts[isExistIndex].detail.quantity;
                 }
             } else {
-                carts.push({ quantity: item.quantity, id: item.id, detail: item.detail })
+                carts.push({ quantity: item.quantity, size: item.size, id: item.id, detail: item.detail })
             }
             //update redux
             state.carts = carts;
@@ -53,7 +53,7 @@ export const orderSlice = createSlice({
         },
 
         doDeleteItemCartAction: (state, action) => {
-            state.carts = state.carts.filter(c => c._id !== action.payload._id);
+            state.carts = state.carts.filter(c => c.id !== action.payload.id);
         },
 
         doPlaceOrderAction: (state, action) => {
