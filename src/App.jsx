@@ -26,6 +26,7 @@ import { callFetchAccount } from './services/api';
 import { doGetAccountAction } from './redux/account/accountSlice';
 import AdminPage from './pages/admin';
 import ManageProductPage from './pages/admin/product';
+import Payment from './pages/payment';
 
 const Layout = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -93,7 +94,6 @@ export default function App() {
         },
       ],
     },
-
     {
       path: "/admin",
       element: <LayoutAdmin />,
@@ -131,16 +131,17 @@ export default function App() {
         },
       ],
     },
-
-
     {
       path: "/login",
       element: <LoginPage />,
     },
-
     {
       path: "/register",
       element: <RegisterPage />,
+    },
+    {
+      path: "/payment",
+      element: <Payment />,
     },
   ]);
 

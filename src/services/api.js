@@ -112,8 +112,8 @@ export const callPlaceOrder = (data) => {
     })
 }
 
-export const callOrderHistory = () => {
-    return axios.get('/api/v1/history');
+export const callOrderHistory = (id, current, pageSize) => {
+    return axios.get(`/api/v1/history?id=${id}&page=${current}&size=${pageSize}`);
 }
 
 export const callUpdateAvatar = (fileImg) => {
@@ -168,4 +168,8 @@ export const updateAddress = (data) => {
 
 export const deleteAddress = (id) => {
     return axios.delete(`/api/v1/addresses/${id}`);
+}
+
+export const createOrder = (amount, orderInfo) => {
+    return axios.post(`/payment/submitOrder?amount=${amount}&orderInfo=${orderInfo}`);
 }

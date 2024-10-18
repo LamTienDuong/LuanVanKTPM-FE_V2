@@ -1,12 +1,12 @@
-
-import { Col, Divider, Form, Radio, Row, Select, message, notification } from 'antd';
+import { Checkbox, Col, Divider, Form, Radio, Row, Select, message, notification } from 'antd';
 import { DeleteTwoTone, LoadingOutlined } from '@ant-design/icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 import { doDeleteItemCartAction, doPlaceOrderAction, doUpdateCartAction } from '../../redux/order/orderSlice';
 import { Input } from 'antd';
-import { callPlaceOrder, createItemInOrder } from '../../services/api';
+import { callPlaceOrder, createItemInOrder, createOrder } from '../../services/api';
 import axios from 'axios';
+import { redirect } from 'react-router-dom';
 const { TextArea } = Input;
 
 const Payment = (props) => {
@@ -26,6 +26,23 @@ const Payment = (props) => {
     const [provinceName, setProvinceName] = useState('');
     const [districtName, setDistrictName] = useState('');
     const [wardName, setWardName] = useState('');
+
+    const [payment, setPayment] = useState("offline");
+
+    const options = [
+        {
+            label: 'Thanh toán khi nhận hàng',
+            value: 'offline',
+        },
+        {
+            label: 'Thanh toán online',
+            value: 'online',
+        }
+    ];
+
+    const onChangePayment = (e) => {
+        setPayment(e.target.value);
+    };
 
 
 
@@ -115,10 +132,10 @@ const Payment = (props) => {
     const onFinish = async (values) => {
         const provinceList = (await axios.get('https://vapi.vnappmob.com/api/province/'));
         const provinceName = provinceList.data.results.filter((province) => province.province_id === values.province);
-        
+
         const districtList = (await axios.get(`https://vapi.vnappmob.com/api/province/district/${provinceCode}`));
         const districtName = districtList.data.results.filter((district) => district.district_id === values.district);
-        
+
         const wardList = (await axios.get(`https://vapi.vnappmob.com/api/province/ward/${districtCode}`));
         const wardName = wardList.data.results.filter((ward) => ward.ward_id === values.ward);
 
@@ -130,6 +147,7 @@ const Payment = (props) => {
 
         setIsSubmit(true);
         let detailOrder = [];
+
         for (const item of carts) {
             let data = {
                 name: item.detail.name,
@@ -147,14 +165,35 @@ const Payment = (props) => {
         }
 
         const data = {
+            addressStore: '369, khu vực Thạnh Hòa, phường Thường Thạnh, quận Cái Răng, thành phố Cần Thơ',
             name: values.name,
             address: address,
             phone: values.phone,
             totalPrice: totalPrice,
+            status: 'Chờ xác nhận',
             userId: user.id,
+            payment: 'false',
             items: detailOrder
         }
-        
+
+        if (payment === 'online') {
+            const vnpayUrl = await createOrder(data.totalPrice, 'Lam Tien Duong');
+            if (vnpayUrl) {
+                window.open(vnpayUrl.slice(9), '_blank');
+                return
+                if (!response.bodyUsed) {
+                    setIsSubmit(false);
+                    notification.error({
+                        message: 'Thanh toán thất bại',
+                        description: 'Thanh toán đã bị hủy',
+                        duration: 60
+                    })
+                    return
+                }
+            }
+
+        }
+
         const res = await callPlaceOrder(data);
         if (res && res.data) {
             message.success('Đặt hàng thành công !');
@@ -287,12 +326,27 @@ const Payment = (props) => {
                             />
                         </Form.Item>
                     </Form>
-                    <div className='info'>
+                    <Form.Item
+                        style={{ margin: 0 }}
+                        labelCol={{ span: 24 }}
+                        label="Hình thức thanh toán"
+                        name="payment"
+                        valuePropName="checked"
+                    // rules={[{ required: true, message: 'Địa chỉ không được để trống!' }]}
+                    >
+                        <Radio.Group
+                            block
+                            options={options}
+                            onChange={onChangePayment}
+                            defaultValue={"offline"}
+                        />
+                    </Form.Item>
+                    {/* <div className='info'>
                         <div className='method'>
                             <div>  Hình thức thanh toán</div>
                             <Radio checked>Thanh toán khi nhận hàng</Radio>
                         </div>
-                    </div>
+                    </div> */}
 
                     <Divider style={{ margin: "5px 0" }} />
                     <div className='calculate'>
