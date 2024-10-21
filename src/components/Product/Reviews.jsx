@@ -5,8 +5,6 @@ import { findAllReviews } from '../../services/api';
 
 const Reviews = (props) => {
     const { current, setCurrent, pageSize, total, listReviews } = props;
-    console.log(listReviews);
-
     const [position, setPosition] = useState('bottom');
     const [align, setAlign] = useState('center');
 

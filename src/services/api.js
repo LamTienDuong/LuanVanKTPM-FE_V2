@@ -170,6 +170,6 @@ export const deleteAddress = (id) => {
     return axios.delete(`/api/v1/addresses/${id}`);
 }
 
-export const createOrder = (amount, orderInfo) => {
-    return axios.post(`/payment/submitOrder?amount=${amount}&orderInfo=${orderInfo}`);
+export const createOrder = (amount, bankCode) => {
+    return axios.post(`/payment/submitOrder?amount=${amount}&bankCode=${bankCode}`);
 }

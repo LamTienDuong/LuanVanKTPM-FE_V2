@@ -1,13 +1,16 @@
 .header-container {
     .page-header {
         display: flex;
+        flex-direction: row;
+        justify-content: space-between;
         user-select: none;
         -moz-user-select: none;
         -webkit-user-select: none;
         height: 55px;
         color: #808089;
         width: 100%;
-        max-width: 1440px;
+        max-width: 1220px;
+        padding: 0 10px;
         margin: 0 auto;
         line-height: 55px;
 

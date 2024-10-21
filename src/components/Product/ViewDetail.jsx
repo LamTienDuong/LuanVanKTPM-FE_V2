@@ -318,6 +318,7 @@ const ViewDetail = (props) => {
                             labelCol={{ span: 24 }} //whole column
                             label="Nội dung đánh giá"
                             name="text"
+                            style={{ margin: '0 auto' }}
                             rules={[
                                 {
                                     required: true,
@@ -326,10 +327,13 @@ const ViewDetail = (props) => {
                             ]}
                         >
                             <Input.TextArea
+                                rows={4}
                                 placeholder="Mời bạn chia sẻ thêm cảm nhận"
                             />
                         </Form.Item>
-                        <Form.Item>
+                        <Form.Item
+                            style={{margin: '0 auto'}}    
+                        >
                             <div style={{ textAlign: 'center' }}>
                                 <Rate
                                     disabled

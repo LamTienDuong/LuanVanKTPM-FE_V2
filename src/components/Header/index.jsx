@@ -31,6 +31,7 @@ const Header = (props) => {
         }
     }
 
+
     let items = [
         {
             label: <label
@@ -59,7 +60,6 @@ const Header = (props) => {
         })
     }
 
-    // const urlAvatar = `${import.meta.env.VITE_BACKEND_URL}/images/avatar/${user?.avatar}`;
     const urlAvatar = `${import.meta.env.VITE_BACKEND_URL}/images/avatar/${user?.avatar}`;
     
 
@@ -102,14 +102,15 @@ const Header = (props) => {
                         <div className='page-header__logo'>
                             <span className='logo'>
                                 <span onClick={() => navigate('/')}> <FaReact className='rotate icon-react' />REACT SHOP</span>
-
-                                <VscSearchFuzzy className='icon-search' />
+                                {/* <VscSearchFuzzy className='icon-search' /> */}
                             </span>
                             <input
                                 className="input-search" type={'text'}
                                 placeholder="Bạn tìm gì hôm nay"
                                 value={props.searchTerm}
-                                onChange={(e) => props.setSearchTerm(e.target.value)}
+                                onChange={(e) => {
+                                    props.setSearchTerm(e.target.value);
+                                }}
                             />
                         </div>
 

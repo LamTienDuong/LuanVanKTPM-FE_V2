@@ -14,7 +14,7 @@ const UserInfo = (props) => {
     const [isSubmit, setIsSubmit] = useState(false);
 
     const urlAvatar = `${import.meta.env.VITE_BACKEND_URL}/images/avatar/${userAvatar}`;
-    
+
 
     const handleUploadAvatar = async ({ file, onSuccess, onError }) => {
         const res = await callUpdateAvatar(file);
@@ -52,7 +52,6 @@ const UserInfo = (props) => {
             //update redux
             dispatch(doUpdateUserInfoAction({ avatar: userAvatar, phone, name }));
             message.success("Cập nhật thông tin user thành công");
-
             //force renew token
             // localStorage.removeItem('access_token');
         } else {

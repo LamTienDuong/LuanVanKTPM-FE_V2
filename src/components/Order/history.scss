@@ -1,5 +1,40 @@
-.layout-app {
-    height: 100vh;
+.ant-table-wrapper {
+    height: 70vh;
+}
 
-    
+.main-header {
+    margin: 20px 40px;
+    font-weight: 600;
+    font-size: 1.5rem;
+    font-style: normal;
+
+}
+
+.table {
+    margin: 0 2rem;
+}
+
+.menu {
+    margin: 0 2rem;
+    font-size: 1.25rem;
+    font-weight: 500;
+    margin-bottom: 0.9rem;
+}
+
+.action {
+    display: flex;
+    font-size: 1rem;
+    gap: 1.25rem;
+    .action-detail {
+        cursor: pointer;
+        padding: 0.5rem;
+        color: blue;
+    }
+
+    .action-edit {
+        cursor: pointer;
+        padding: 0.5rem;
+        color: red;
+
+    }
 }

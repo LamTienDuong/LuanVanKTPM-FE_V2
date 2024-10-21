@@ -1,5 +1,5 @@
 import { FilterTwoTone, ReloadOutlined, HomeOutlined, UserOutlined } from '@ant-design/icons';
-import { Row, Col, Form, Checkbox, Divider, InputNumber, Button, Rate, Tabs, Pagination, Spin, Empty, Breadcrumb } from 'antd';
+import { Row, Col, Form, Checkbox, Divider, InputNumber, Button, Rate, Tabs, Pagination, Spin, Empty, Breadcrumb, Slider } from 'antd';
 import { useEffect, useState } from 'react';
 import { Link, useNavigate, useOutletContext } from 'react-router-dom';
 import { callFetchCategory, callFetchListBook } from '../../services/api';
@@ -12,7 +12,7 @@ const Home = () => {
 
     const [listBook, setListBook] = useState([]);
     const [current, setCurrent] = useState(1);
-    const [pageSize, setPageSize] = useState(5);
+    const [pageSize, setPageSize] = useState(10);
     const [total, setTotal] = useState(0);
 
     const [isLoading, setIsLoading] = useState(false);
@@ -20,6 +20,16 @@ const Home = () => {
     const [sortQuery, setSortQuery] = useState("sort=name,asc");
 
     const [showMobileFilter, setShowMobileFilter] = useState(false);
+
+    const [inputFromValue, setInputFromValue] = useState(10000);
+    const [inputToValue, setInputToValue] = useState(1000000);
+
+    const onChange = (newValue) => {
+        setInputFromValue(newValue[0]);
+        setInputToValue(newValue[1]);
+
+
+    };
 
     const [form] = Form.useForm();
     const navigate = useNavigate();
@@ -82,12 +92,12 @@ const Home = () => {
     }
 
     const handleChangeFilter = (changedValues, values) => {
-        // console.log(">>> check changedValues, values: ", changedValues, values)
-
+        console.log(">>> check changedValues, values: ", changedValues, values);
         //only fire if category changes
         if (changedValues.category) {
             const cate = values.category;
-            if (cate && cate.length > 0) {
+            const slider = values.slider;
+            if (cate.length > 0) {
                 let search = '';
                 cate.forEach((item, index) => {
                     if (index == 0) {
@@ -97,12 +107,33 @@ const Home = () => {
                     }
 
                 });
-                // const f = cate.join(' or ');
-                setFilter(search)
+                search += ` and price >: ${inputFromValue} and price <: ${inputToValue}`;
+                setFilter(search);
             } else {
-                //reset data -> fetch all
-                setFilter('');
+                let search = '';
+                search += ` price >: ${inputFromValue} and price <: ${inputToValue}`;
+                setFilter(search);
             }
+        }
+
+        if (changedValues.slider) {
+            const cate = values.category;
+            let search = '';
+            search += ` price >: ${inputFromValue} and price <: ${inputToValue}`;
+
+            if (cate && cate.length > 0) {
+                cate.forEach((item, index) => {
+                    if (index == 0) {
+                        search += ` and category.name ~ '${item}'`;
+                    } else {
+                        search += ` or category.name ~ '${item}'`;
+                    }
+
+                });
+            } else {
+                search += ` and category.name ~ ''`;
+            }
+            setFilter(search)
         }
 
     }
@@ -149,46 +180,6 @@ const Home = () => {
         },
     ];
 
-    const nonAccentVietnamese = (str) => {
-        str = str.replace(/A|Á|À|Ã|Ạ|Â|Ấ|Ầ|Ẫ|Ậ|Ă|Ắ|Ằ|Ẵ|Ặ/g, "A");
-        str = str.replace(/à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ/g, "a");
-        str = str.replace(/E|É|È|Ẽ|Ẹ|Ê|Ế|Ề|Ễ|Ệ/, "E");
-        str = str.replace(/è|é|ẹ|ẻ|ẽ|ê|ề|ế|ệ|ể|ễ/g, "e");
-        str = str.replace(/I|Í|Ì|Ĩ|Ị/g, "I");
-        str = str.replace(/ì|í|ị|ỉ|ĩ/g, "i");
-        str = str.replace(/O|Ó|Ò|Õ|Ọ|Ô|Ố|Ồ|Ỗ|Ộ|Ơ|Ớ|Ờ|Ỡ|Ợ/g, "O");
-        str = str.replace(/ò|ó|ọ|ỏ|õ|ô|ồ|ố|ộ|ổ|ỗ|ơ|ờ|ớ|ợ|ở|ỡ/g, "o");
-        str = str.replace(/U|Ú|Ù|Ũ|Ụ|Ư|Ứ|Ừ|Ữ|Ự/g, "U");
-        str = str.replace(/ù|ú|ụ|ủ|ũ|ư|ừ|ứ|ự|ử|ữ/g, "u");
-        str = str.replace(/Y|Ý|Ỳ|Ỹ|Ỵ/g, "Y");
-        str = str.replace(/ỳ|ý|ỵ|ỷ|ỹ/g, "y");
-        str = str.replace(/Đ/g, "D");
-        str = str.replace(/đ/g, "d");
-        // Some system encode vietnamese combining accent as individual utf-8 characters
-        str = str.replace(/\u0300|\u0301|\u0303|\u0309|\u0323/g, ""); // Huyền sắc hỏi ngã nặng
-        str = str.replace(/\u02C6|\u0306|\u031B/g, ""); // Â, Ê, Ă, Ơ, Ư
-        return str;
-    }
-
-    const convertSlug = (str) => {
-        str = nonAccentVietnamese(str);
-        str = str.replace(/^\s+|\s+$/g, ''); // trim
-        str = str.toLowerCase();
-
-        // remove accents, swap ñ for n, etc
-        const from = "ÁÄÂÀÃÅČÇĆĎÉĚËÈÊẼĔȆĞÍÌÎÏİŇÑÓÖÒÔÕØŘŔŠŞŤÚŮÜÙÛÝŸŽáäâàãåčçćďéěëèêẽĕȇğíìîïıňñóöòôõøðřŕšşťúůüùûýÿžþÞĐđßÆa·/_,:;";
-        const to = "AAAAAACCCDEEEEEEEEGIIIIINNOOOOOORRSSTUUUUUYYZaaaaaacccdeeeeeeeegiiiiinnooooooorrsstuuuuuyyzbBDdBAa------";
-        for (let i = 0, l = from.length; i < l; i++) {
-            str = str.replace(new RegExp(from.charAt(i), 'g'), to.charAt(i));
-        }
-
-        str = str.replace(/[^a-z0-9 -]/g, '') // remove invalid chars
-            .replace(/\s+/g, '-') // collapse whitespace and replace by -
-            .replace(/-+/g, '-'); // collapse dashes
-
-        return str;
-    }
-
     const handleRedirectBook = (book) => {
         // const slug = convertSlug(book.mainText);
         navigate(`/product/id=${book.id}`)
@@ -196,11 +187,9 @@ const Home = () => {
 
     return (
         <>
-
-
             <div style={{ background: '#efefef', padding: "20px 0" }}>
                 <div className="homepage-container" style={{ maxWidth: 1440, margin: '0 auto' }}>
-                    <Breadcrumb
+                    {/* <Breadcrumb
                         style={{ margin: '5px 0' }}
                         items={[
                             {
@@ -215,7 +204,7 @@ const Home = () => {
                                 ),
                             }
                         ]}
-                    />
+                    /> */}
                     <Row gutter={[20, 20]}>
                         <Col md={4} sm={0} xs={0}>
                             <div style={{ padding: "20px", background: '#fff', borderRadius: 5 }}>
@@ -227,6 +216,8 @@ const Home = () => {
                                         form.resetFields();
                                         setFilter('');
                                         setSearchTerm('');
+                                        setInputFromValue(10000);
+                                        setInputToValue(1000000);
                                     }}
                                     />
                                 </div>
@@ -257,45 +248,49 @@ const Home = () => {
                                     </Form.Item>
                                     <Divider />
                                     <Form.Item
+                                        name="slider"
                                         label="Khoảng giá"
                                         labelCol={{ span: 24 }}
                                     >
-                                        <Row gutter={[10, 10]} style={{ width: "100%" }}>
-                                            <Col xl={24} md={24}>
-                                                <Form.Item name={["range", 'from']}>
-                                                    <InputNumber
-                                                        name='from'
-                                                        min={0}
-                                                        placeholder="đ TỪ"
-                                                        formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-                                                        style={{ width: '100%' }}
-                                                    />
-                                                </Form.Item>
-                                            </Col>
-                                            {/* <Col xl={24} md={0}>
-                                                <div > đến </div>
-                                            </Col> */}
-                                            <Col xl={24} md={24}>
-                                                <Form.Item name={["range", 'to']}>
-                                                    <InputNumber
-                                                        name='to'
-                                                        min={0}
-                                                        placeholder="đ ĐẾN"
-                                                        formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-                                                        style={{ width: '100%' }}
-                                                    />
-                                                </Form.Item>
-                                            </Col>
-                                        </Row>
-                                        <div>
-                                            <Button onClick={() => form.submit()}
-                                                style={{ width: "100%" }} type='primary'>Áp dụng</Button>
-                                        </div>
+                                        <Slider
+                                            min={10000}
+                                            max={1000000}
+                                            range
+                                            onChange={onChange}
+                                            defaultValue={[10000, 1000000]} />
                                     </Form.Item>
+                                    <Row>
+                                        <Col span={24}>
+                                            <InputNumber
+                                                name='from'
+                                                prefix="VND"
+                                                style={{
+                                                    width: '100%',
+                                                }}
+                                                min={10000}
+                                                max={1000000}
+                                                formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                                                value={inputFromValue}
+                                            />
+                                        </Col>
+                                        <Col span={24} style={{ textAlign: 'center' }}>
+                                            <p>đến</p>
+                                        </Col>
+                                        <Col span={24}>
+                                            <InputNumber
+                                                name='to'
+                                                prefix="VND"
+                                                min={10000}
+                                                max={1000000}
+                                                formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                                                value={inputToValue}
+                                                style={{ width: '100%' }}
+                                            />
+                                        </Col>
+                                    </Row>
                                 </Form>
                             </div>
                         </Col>
-
                         <Col md={20} xs={24} >
                             <Spin spinning={isLoading} tip="Loading...">
                                 <div style={{ padding: "20px", background: '#fff', borderRadius: 5 }}>

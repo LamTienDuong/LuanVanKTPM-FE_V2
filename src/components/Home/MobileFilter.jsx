@@ -77,7 +77,7 @@ const MobileFilter = (props) => {
                     </div>
                 </Form.Item>
                 <Divider />
-                <Form.Item
+                {/* <Form.Item
                     label="Đánh giá"
                     labelCol={{ span: 24 }}
                 >
@@ -101,7 +101,7 @@ const MobileFilter = (props) => {
                         <Rate value={1} disabled style={{ color: '#ffce3d', fontSize: 15 }} />
                         <span className="ant-rate-text">trở lên</span>
                     </div>
-                </Form.Item>
+                </Form.Item> */}
             </Form>
         </Drawer>
     )

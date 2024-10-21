@@ -35,14 +35,16 @@ const Layout = () => {
     <div className='layout-app'>
       <Header searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
       <Outlet context={[searchTerm, setSearchTerm]} />
-      <Footer />
+      <Footer style={{
+        textAlign: 'center',
+      }}> React Shop ©{new Date().getFullYear()} Created by Lam Tien Duong</Footer>
     </div>
   )
 }
 
 export default function App() {
   const dispatch = useDispatch();
-  const isLoading = useSelector(state => state.account.isLoading)
+  const isLoading = useSelector(state => state.account.isLoading);
 
   const getAccount = async () => {
     if (

@@ -58,7 +58,7 @@ const ProductModalCreate = (props) => {
         setIsSubmit(true)
         const res = await callCreateBook(thumbnail, slider, name, price, sold, quantity, category);
         if (res && res.data) {
-            message.success('Tạo mới book thành công');
+            message.success('Tạo mới sản phẩm thành công');
             form.resetFields();
             setDataSlider([]);
             setDataThumbnail([])
@@ -159,7 +159,7 @@ const ProductModalCreate = (props) => {
         <>
 
             <Modal
-                title="Thêm mới book"
+                title="Thêm mới sản phẩm"
                 open={openModalCreate}
                 onOk={() => { form.submit() }}
                 onCancel={() => {

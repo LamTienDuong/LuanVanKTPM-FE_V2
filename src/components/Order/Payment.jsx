@@ -8,6 +8,7 @@ import { callPlaceOrder, createItemInOrder, createOrder } from '../../services/a
 import axios from 'axios';
 import { redirect } from 'react-router-dom';
 const { TextArea } = Input;
+import './payment.scss'
 
 const Payment = (props) => {
     const carts = useSelector(state => state.order.carts);
@@ -172,15 +173,13 @@ const Payment = (props) => {
             totalPrice: totalPrice,
             status: 'Chờ xác nhận',
             userId: user.id,
-            payment: 'false',
             items: detailOrder
         }
 
         if (payment === 'online') {
-            const vnpayUrl = await createOrder(data.totalPrice, 'Lam Tien Duong');
+            const vnpayUrl = await createOrder(data.totalPrice, 'NCB');
             if (vnpayUrl) {
                 window.open(vnpayUrl.slice(9), '_blank');
-                return
                 if (!response.bodyUsed) {
                     setIsSubmit(false);
                     notification.error({
@@ -210,7 +209,135 @@ const Payment = (props) => {
 
     return (
         <Row gutter={[20, 20]}>
-            <Col md={16} xs={24}>
+            <Col md={14} xs={24} >
+                <div className='order-sum'>
+                    <Form
+                        onFinish={onFinish}
+                        form={form}
+                    >
+                        <Row gutter={[15,15]}>
+                            <Col span={12}>
+                                <Form.Item
+                                    style={{ margin: 0 }}
+                                    labelCol={{ span: 24 }}
+                                    label="Tên người nhận"
+                                    name="name"
+                                    initialValue={user?.name}
+                                    rules={[{ required: true, message: 'Tên người nhận không được để trống!' }]}
+                                >
+                                    <Input />
+                                </Form.Item>
+                            </Col>
+                            <Col span={12}>
+                                <Form.Item
+                                    style={{ margin: 0 }}
+                                    labelCol={{ span: 24 }}
+                                    label="Số điện thoại"
+                                    name="phone"
+                                    initialValue={user?.phone}
+                                    rules={[{ required: true, message: 'Số điện thoại không được để trống!' }]}
+                                >
+                                    <Input />
+                                </Form.Item>
+                            </Col>
+
+                            <Col span={8}>
+                                <Form.Item
+                                    labelCol={{ span: 24 }}
+                                    label="Tỉnh/Thành phố"
+                                    name="province"
+                                    rules={[{ required: true, message: 'Tỉnh/Thành phố không được để trống!' }]}
+                                >
+                                    <Select
+                                        // defaultValue={null}
+                                        showSearch
+                                        allowClear
+                                        onChange={handleChangeProvince}
+                                        options={province}
+                                    />
+                                </Form.Item>
+                            </Col>
+                            <Col span={8}>
+                                <Form.Item
+                                    labelCol={{ span: 24 }}
+                                    label="Quận/Huyện"
+                                    name="district"
+                                    rules={[{ required: true, message: 'Quận/Huyện không được để trống!' }]}
+                                >
+                                    <Select
+                                        // defaultValue={null}
+                                        showSearch
+                                        allowClear
+                                        onChange={handleChangeDistrict}
+                                        options={district}
+                                    />
+                                </Form.Item>
+                            </Col>
+                            <Col span={8}>
+                                <Form.Item
+                                    labelCol={{ span: 24 }}
+                                    label="Xã/Phường"
+                                    name="ward"
+                                    rules={[{ required: true, message: 'Xã/Phường không được để trống!' }]}
+                                >
+                                    <Select
+                                        // defaultValue={null}
+                                        showSearch
+                                        allowClear
+                                        // onChange={handleChangeProvince}
+                                        options={ward}
+                                    />
+                                </Form.Item>
+                            </Col>
+                            <Col span={24}>
+                                <Form.Item
+                                    style={{ margin: 0 }}
+                                    labelCol={{ span: 24 }}
+                                    label="Địa chỉ"
+                                    name="address"
+                                    rules={[{ required: true, message: 'Địa chỉ không được để trống!' }]}
+                                >
+                                    <TextArea
+                                        // autoFocus
+                                        rows={4}
+                                    />
+                                </Form.Item>
+                            </Col>
+                        </Row>
+                    </Form>
+                    <Form.Item
+                        style={{ margin: 0 }}
+                        labelCol={{ span: 24 }}
+                        label="Hình thức thanh toán"
+                        name="payment"
+                        valuePropName="checked"
+                    // rules={[{ required: true, message: 'Địa chỉ không được để trống!' }]}
+                    >
+                        <Radio.Group
+                            block
+                            options={options}
+                            onChange={onChangePayment}
+                            defaultValue={"offline"}
+                        />
+                    </Form.Item>
+                    <Divider style={{ margin: "5px 0" }} />
+                    <div className='calculate'>
+                        <span> Tổng tiền</span>
+                        <span className='sum-final'>
+                            {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(totalPrice || 0)}
+                        </span>
+                    </div>
+                    <Divider style={{ margin: "5px 0" }} />
+                    <button
+                        onClick={() => form.submit()}
+                        disabled={isSubmit}
+                    >
+                        {isSubmit && <span><LoadingOutlined /> &nbsp;</span>}
+                        Đặt Hàng ({carts?.length ?? 0})
+                    </button>
+                </div>
+            </Col>
+            <Col md={10} xs={24}>
                 {carts?.map((book, index) => {
                     const currentBookPrice = book?.detail?.price ?? 0;
                     return (
@@ -239,131 +366,10 @@ const Payment = (props) => {
                                     onClick={() => dispatch(doDeleteItemCartAction({ id: book.id }))}
                                     twoToneColor="#eb2f96"
                                 />
-
                             </div>
                         </div>
                     )
                 })}
-            </Col>
-            <Col md={8} xs={24} >
-                <div className='order-sum'>
-                    <Form
-                        onFinish={onFinish}
-                        form={form}
-                    >
-                        <Form.Item
-                            style={{ margin: 0 }}
-                            labelCol={{ span: 24 }}
-                            label="Tên người nhận"
-                            name="name"
-                            initialValue={user?.name}
-                            rules={[{ required: true, message: 'Tên người nhận không được để trống!' }]}
-                        >
-                            <Input />
-                        </Form.Item>
-                        <Form.Item
-                            style={{ margin: 0 }}
-                            labelCol={{ span: 24 }}
-                            label="Số điện thoại"
-                            name="phone"
-                            initialValue={user?.phone}
-                            rules={[{ required: true, message: 'Số điện thoại không được để trống!' }]}
-                        >
-                            <Input />
-                        </Form.Item>
-                        <Form.Item
-                            labelCol={{ span: 24 }}
-                            label="Tỉnh/Thành phố"
-                            name="province"
-                            rules={[{ required: true, message: 'Tỉnh/Thành phố không được để trống!' }]}
-                        >
-                            <Select
-                                // defaultValue={null}
-                                showSearch
-                                allowClear
-                                onChange={handleChangeProvince}
-                                options={province}
-                            />
-                        </Form.Item>
-                        <Form.Item
-                            labelCol={{ span: 24 }}
-                            label="Quận/Huyện"
-                            name="district"
-                            rules={[{ required: true, message: 'Quận/Huyện không được để trống!' }]}
-                        >
-                            <Select
-                                // defaultValue={null}
-                                showSearch
-                                allowClear
-                                onChange={handleChangeDistrict}
-                                options={district}
-                            />
-                        </Form.Item>
-                        <Form.Item
-                            labelCol={{ span: 24 }}
-                            label="Xã/Phường"
-                            name="ward"
-                            rules={[{ required: true, message: 'Xã/Phường không được để trống!' }]}
-                        >
-                            <Select
-                                // defaultValue={null}
-                                showSearch
-                                allowClear
-                                // onChange={handleChangeProvince}
-                                options={ward}
-                            />
-                        </Form.Item>
-                        <Form.Item
-                            style={{ margin: 0 }}
-                            labelCol={{ span: 24 }}
-                            label="Địa chỉ"
-                            name="address"
-                            rules={[{ required: true, message: 'Địa chỉ không được để trống!' }]}
-                        >
-                            <TextArea
-                                // autoFocus
-                                rows={4}
-                            />
-                        </Form.Item>
-                    </Form>
-                    <Form.Item
-                        style={{ margin: 0 }}
-                        labelCol={{ span: 24 }}
-                        label="Hình thức thanh toán"
-                        name="payment"
-                        valuePropName="checked"
-                    // rules={[{ required: true, message: 'Địa chỉ không được để trống!' }]}
-                    >
-                        <Radio.Group
-                            block
-                            options={options}
-                            onChange={onChangePayment}
-                            defaultValue={"offline"}
-                        />
-                    </Form.Item>
-                    {/* <div className='info'>
-                        <div className='method'>
-                            <div>  Hình thức thanh toán</div>
-                            <Radio checked>Thanh toán khi nhận hàng</Radio>
-                        </div>
-                    </div> */}
-
-                    <Divider style={{ margin: "5px 0" }} />
-                    <div className='calculate'>
-                        <span> Tổng tiền</span>
-                        <span className='sum-final'>
-                            {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(totalPrice || 0)}
-                        </span>
-                    </div>
-                    <Divider style={{ margin: "5px 0" }} />
-                    <button
-                        onClick={() => form.submit()}
-                        disabled={isSubmit}
-                    >
-                        {isSubmit && <span><LoadingOutlined /> &nbsp;</span>}
-                        Đặt Hàng ({carts?.length ?? 0})
-                    </button>
-                </div>
             </Col>
         </Row>
     )
