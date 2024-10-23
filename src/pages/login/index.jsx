@@ -25,9 +25,8 @@ const LoginPage = () => {
             navigate('/')
         } else {
             notification.error({
-                message: "Có lỗi xảy ra",
-                description:
-                    res.message && Array.isArray(res.message) ? res.message[0] : res.message,
+                message: "Thông tin đăng nhập không hợp lệ",
+                description: "Tên đăng nhập hoặc mật khẩu không chính xác",
                 duration: 5
             })
         }
@@ -56,7 +55,7 @@ const LoginPage = () => {
                                 name="username"
                                 rules={[{ required: true, message: 'Email không được để trống!' }]}
                             >
-                                <Input />
+                                <Input id='email'/>
                             </Form.Item>
 
                             <Form.Item
@@ -65,9 +64,8 @@ const LoginPage = () => {
                                 name="password"
                                 rules={[{ required: true, message: 'Mật khẩu không được để trống!' }]}
                             >
-                                <Input.Password />
+                                <Input.Password id='password'/>
                             </Form.Item>
-
                             <Form.Item
                             // wrapperCol={{ offset: 6, span: 16 }}
                             >
@@ -78,7 +76,7 @@ const LoginPage = () => {
                             <Divider>Or</Divider>
                             <p className="text text-normal">Chưa có tài khoản ?
                                 <span>
-                                    <Link to='/register' > Đăng Ký </Link>
+                                    <Link id='link-to-register' to='/register' > Đăng Ký </Link>
                                 </span>
                             </p>
                             <br />

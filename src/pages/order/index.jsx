@@ -1,14 +1,49 @@
 import ViewOrder from "../../components/Order/ViewOrder";
-import { Breadcrumb, Button, Result, Steps } from 'antd';
+import { Breadcrumb, Button, message, Result, Steps } from 'antd';
 import './order.scss';
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Payment from "../../components/Order/Payment";
 import { SmileOutlined, HomeOutlined } from "@ant-design/icons";
 import { Link, useNavigate } from "react-router-dom";
+import { callPlaceOrder } from "../../services/api";
+import { useDispatch } from "react-redux";
+import { doPlaceOrderAction } from "../../redux/order/orderSlice";
 
 const OrderPage = (props) => {
     const [currentStep, setCurrentStep] = useState(0);
     const navigate = useNavigate();
+    const dispatch = useDispatch();
+
+    const status = window.location.search.endsWith("success");
+
+    useEffect(() => {
+        if (status) {
+            const order = JSON.parse(localStorage.getItem("order"));
+            const fetchData = async () => {
+                try {
+                    const res = await callPlaceOrder(order);
+                    if (res && res.data) {
+                        message.success('Đặt hàng thành công !');
+                        dispatch(doPlaceOrderAction());
+                        setCurrentStep(2);
+                        localStorage.removeItem("order");
+                    } else {
+                        notification.error({
+                            message: "Đã có lỗi xảy ra",
+                            description: res.message
+                        })
+                    }
+
+                } catch (err) {
+                    console.log(err);
+                }
+            };
+            fetchData();
+        } else {
+            setCurrentStep(0);
+            localStorage.removeItem("order");
+        }
+    }, []);
 
     return (
         <div style={{ background: '#efefef', padding: "20px 0" }}>

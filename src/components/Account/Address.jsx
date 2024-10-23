@@ -248,7 +248,6 @@ const Address = (props) => {
                                     rules={[{ required: true, message: 'Tỉnh/Thành phố không được để trống!' }]}
                                 >
                                     <Select
-                                        // defaultValue={null}
                                         showSearch
                                         allowClear
                                         onChange={handleChangeProvince}

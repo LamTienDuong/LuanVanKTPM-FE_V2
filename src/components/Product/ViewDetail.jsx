@@ -16,6 +16,7 @@ const ViewDetail = (props) => {
     const { dataBook } = props;
     const [form] = Form.useForm();
     const user = useSelector(state => state.account.user);
+    const isAuthenticated = useSelector(state => state.account.isAuthenticated);
 
     const url = window.location.href;
     const id = url.split('id=')[1];
@@ -278,76 +279,79 @@ const ViewDetail = (props) => {
                     }
                 </div>
             </div>
-            <div style={{ background: '#fff', padding: "20px 0", margin: '20px 0' }}>
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                    <h3>Đánh giá sản phẩm này</h3>
-                    <p>Nếu đã mua sản phẩm này. Hãy đánh giá ngay để giúp hàng ngàn người chọn mua hàng tốt nhất bạn nhé!</p>
-                    <Rate
-                        style={{ fontSize: '300%' }}
-                        tooltips={desc}
-                        onChange={(value) => {
-                            setCurrentValue(value);
-                            setIsModalOpen(true);
+            {isAuthenticated &&
+                <div style={{ background: '#fff', padding: "20px 0", margin: '20px 0' }}>
+
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                        <h3>Đánh giá sản phẩm này</h3>
+                        <p>Nếu đã mua sản phẩm này. Hãy đánh giá ngay để giúp hàng ngàn người chọn mua hàng tốt nhất bạn nhé!</p>
+                        <Rate
+                            style={{ fontSize: '300%' }}
+                            tooltips={desc}
+                            onChange={(value) => {
+                                setCurrentValue(value);
+                                setIsModalOpen(true);
+                            }}
+                            value={currentValue}
+                        />
+                        {currentValue ? <span>{desc[currentValue - 1]}</span> : null}
+                    </div>
+                    <Modal
+                        title="Đánh giá sản phẩm"
+                        open={isModalOpen}
+                        onOk={() => { form.submit() }}
+                        onCancel={() => {
+                            form.resetFields();
+                            setIsModalOpen(false);
                         }}
-                        value={currentValue}
-                    />
-                    {currentValue ? <span>{desc[currentValue - 1]}</span> : null}
-                </div>
-                <Modal
-                    title="Đánh giá sản phẩm"
-                    open={isModalOpen}
-                    onOk={() => { form.submit() }}
-                    onCancel={() => {
-                        form.resetFields();
-                        setIsModalOpen(false);
-                    }}
-                    //do not close when click fetchBook
-                    maskClosable={false}
-                >
-                    {/* <Image
+                        //do not close when click fetchBook
+                        maskClosable={false}
+                    >
+                        {/* <Image
                         width={200}
                         src="https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png"
                     /> */}
-                    <Form
-                        form={form}
-                        name="basic"
-                        onFinish={onFinish}
-                        autoComplete="off"
-                    >
-                        <Form.Item
-                            labelCol={{ span: 24 }} //whole column
-                            label="Nội dung đánh giá"
-                            name="text"
-                            style={{ margin: '0 auto' }}
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Vui lòng nhập nội dung đánh giá!',
-                                },
-                            ]}
+                        <Form
+                            form={form}
+                            name="basic"
+                            onFinish={onFinish}
+                            autoComplete="off"
                         >
-                            <Input.TextArea
-                                rows={4}
-                                placeholder="Mời bạn chia sẻ thêm cảm nhận"
-                            />
-                        </Form.Item>
-                        <Form.Item
-                            style={{margin: '0 auto'}}    
-                        >
-                            <div style={{ textAlign: 'center' }}>
-                                <Rate
-                                    disabled
-                                    style={{ fontSize: '300%' }}
-                                    tooltips={desc}
-                                    value={currentValue}
+                            <Form.Item
+                                labelCol={{ span: 24 }} //whole column
+                                label="Nội dung đánh giá"
+                                name="text"
+                                style={{ margin: '0 auto' }}
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Vui lòng nhập nội dung đánh giá!',
+                                    },
+                                ]}
+                            >
+                                <Input.TextArea
+                                    rows={4}
+                                    placeholder="Mời bạn chia sẻ thêm cảm nhận"
                                 />
-                                <br />
-                                {currentValue ? <span>{desc[currentValue - 1]}</span> : null}
-                            </div>
-                        </Form.Item>
-                    </Form>
-                </Modal>
-            </div>
+                            </Form.Item>
+                            <Form.Item
+                                style={{ margin: '0 auto' }}
+                            >
+                                <div style={{ textAlign: 'center' }}>
+                                    <Rate
+                                        disabled
+                                        style={{ fontSize: '300%' }}
+                                        tooltips={desc}
+                                        value={currentValue}
+                                    />
+                                    <br />
+                                    {currentValue ? <span>{desc[currentValue - 1]}</span> : null}
+                                </div>
+                            </Form.Item>
+                        </Form>
+                    </Modal>
+                </div>
+            }
             <div style={{ background: '#fff', padding: "20px 100px", margin: '20px 0' }}>
                 <h3 style={{ textAlign: 'center' }}>Đánh giá của khách hàng đối với sản phẩm {dataBook?.name}</h3>
                 <Reviews

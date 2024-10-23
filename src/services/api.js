@@ -1,7 +1,16 @@
 import axios from '../utils/axios-customize';
 
-export const callRegister = (name, email, password, phone) => {
-    return axios.post('/api/v1/auth/register', { name, email, password, phone })
+export const callRegister = (name, email, password) => {
+    const data = {
+        name: name, 
+        avatar: 'avatar.jpg',
+        email: email, 
+        password: password,
+        role: {
+            id: 1
+        }
+    }
+    return axios.post('/api/v1/auth/register', data)
 }
 
 export const callLogin = (username, password) => {
@@ -112,8 +121,8 @@ export const callPlaceOrder = (data) => {
     })
 }
 
-export const callOrderHistory = (id, current, pageSize) => {
-    return axios.get(`/api/v1/history?id=${id}&page=${current}&size=${pageSize}`);
+export const callOrderHistory = (id, current, pageSize, filter) => {
+    return axios.get(`/api/v1/history?&page=${current}&size=${pageSize}&filter=userId : ${id} and status ~ '${filter}'`);
 }
 
 export const callUpdateAvatar = (fileImg) => {
@@ -147,7 +156,7 @@ export const callFetchDashboard = () => {
 }
 
 export const callFetchListOrder = (query) => {
-    return axios.get(`/api/v1/order?${query}`)
+    return axios.get(`/api/v1/orders?${query}`)
 }
 
 export const createReviews = (data) => {
@@ -170,6 +179,6 @@ export const deleteAddress = (id) => {
     return axios.delete(`/api/v1/addresses/${id}`);
 }
 
-export const createOrder = (amount, bankCode) => {
-    return axios.post(`/payment/submitOrder?amount=${amount}&bankCode=${bankCode}`);
+export const createOrder = (amount) => {
+    return axios.get(`/api/v1/vn-pay?amount=${amount}`);
 }

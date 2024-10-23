@@ -6,7 +6,7 @@ import { doDeleteItemCartAction, doPlaceOrderAction, doUpdateCartAction } from '
 import { Input } from 'antd';
 import { callPlaceOrder, createItemInOrder, createOrder } from '../../services/api';
 import axios from 'axios';
-import { redirect } from 'react-router-dom';
+import { redirect, useParams } from 'react-router-dom';
 const { TextArea } = Input;
 import './payment.scss'
 
@@ -44,8 +44,6 @@ const Payment = (props) => {
     const onChangePayment = (e) => {
         setPayment(e.target.value);
     };
-
-
 
     useEffect(() => {
         getProvince();
@@ -173,24 +171,17 @@ const Payment = (props) => {
             totalPrice: totalPrice,
             status: 'Chờ xác nhận',
             userId: user.id,
+            payment: payment,
             items: detailOrder
         }
 
         if (payment === 'online') {
-            const vnpayUrl = await createOrder(data.totalPrice, 'NCB');
-            if (vnpayUrl) {
-                window.open(vnpayUrl.slice(9), '_blank');
-                if (!response.bodyUsed) {
-                    setIsSubmit(false);
-                    notification.error({
-                        message: 'Thanh toán thất bại',
-                        description: 'Thanh toán đã bị hủy',
-                        duration: 60
-                    })
-                    return
-                }
+            const vnpayUrl = await createOrder(data.totalPrice);
+            if (vnpayUrl.data) {
+                window.location.replace(vnpayUrl.data.paymentUrl);
+                localStorage.setItem("order", JSON.stringify(data));
+                return
             }
-
         }
 
         const res = await callPlaceOrder(data);
@@ -215,7 +206,7 @@ const Payment = (props) => {
                         onFinish={onFinish}
                         form={form}
                     >
-                        <Row gutter={[15,15]}>
+                        <Row gutter={[15, 15]}>
                             <Col span={12}>
                                 <Form.Item
                                     style={{ margin: 0 }}

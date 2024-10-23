@@ -315,7 +315,7 @@ const Home = () => {
                                     <Row className='customize-row'>
                                         {listBook?.map((item, index) => {
                                             return (
-                                                <div className="column" key={`book-${index}`} onClick={() => handleRedirectBook(item)}>
+                                                <div id={`product-${index}`} className="column" key={`book-${index}`} onClick={() => handleRedirectBook(item)}>
                                                     <div className='wrapper'>
                                                         <div className='thumbnail'>
                                                             <img src={`${import.meta.env.VITE_BACKEND_URL}/images/product/${item.thumbnail}`} alt="thumbnail book" />

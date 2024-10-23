@@ -4,8 +4,6 @@ import { callFetchListOrder } from '../../../services/api';
 import { CloudUploadOutlined, DeleteTwoTone, EditTwoTone, ExportOutlined, PlusOutlined, ReloadOutlined } from '@ant-design/icons';
 import moment from 'moment/moment';
 import { FORMAT_DATE_DISPLAY } from '../../../utils/constant';
-
-
 // https://stackblitz.com/run?file=demo.tsx
 const MangeOrder = () => {
     const [listOrder, setListOrder] = useState([]);
@@ -41,8 +39,8 @@ const MangeOrder = () => {
 
     const columns = [
         {
-            title: 'Id',
-            dataIndex: '_id',
+            title: 'Mã đơn hàng',
+            dataIndex: 'code',
             render: (text, record, index) => {
                 return (
                     <a href='#' onClick={() => {
@@ -53,7 +51,7 @@ const MangeOrder = () => {
             }
         },
         {
-            title: 'Price',
+            title: 'Trạng thái',
             dataIndex: 'totalPrice',
             render: (text, record, index) => {
                 return (
@@ -61,33 +59,25 @@ const MangeOrder = () => {
 
                 )
             },
-            sorter: true
         },
         {
-            title: 'Name',
-            dataIndex: 'name',
-            sorter: true
-        },
-        {
-            title: 'Address',
+            title: 'Địa chỉ',
             dataIndex: 'address',
-            sorter: true,
+            render: (text, record, index) => {
+                return (
+                    <>{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(record.totalPrice)}</>
+
+                )
+            },
         },
         {
-            title: 'Số điện thoại',
-            dataIndex: 'phone',
-            sorter: true
-        },
-        {
-            title: 'Ngày cập nhật',
-            dataIndex: 'updatedAt',
-            sorter: true,
+            title: 'Ngày tạo',
+            dataIndex: 'createdAt',
             render: (text, record, index) => {
                 return (
                     <>{moment(record.updatedAt).format(FORMAT_DATE_DISPLAY)}</>
                 )
             }
-
         },
 
     ];
@@ -113,7 +103,7 @@ const MangeOrder = () => {
     const renderHeader = () => {
         return (
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <span>Table List Order</span>
+                <span>Danh sách đơn hàng</span>
                 <span style={{ display: 'flex', gap: 15 }}>
                     <Button type='ghost' onClick={() => {
                         setFilter("");
@@ -138,11 +128,11 @@ const MangeOrder = () => {
                     <Table
                         title={renderHeader}
                         loading={isLoading}
-
+                        bordered
                         columns={columns}
                         dataSource={listOrder}
                         onChange={onChange}
-                        rowKey="_id"
+                        rowKey="id"
                         pagination={
                             {
                                 current: current,

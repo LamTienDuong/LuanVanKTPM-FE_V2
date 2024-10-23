@@ -12,6 +12,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import LayoutAdmin from './components/Admin/LayoutAdmin';
 import './styles/reset.scss';
 import './styles/global.scss';
+import './styles/footer.scss';
 import ManageUserPage from './pages/admin/user';
 import OrderPage from './pages/order';
 import HistoryPage from './pages/history';
@@ -34,8 +35,10 @@ const Layout = () => {
   return (
     <div className='layout-app'>
       <Header searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
-      <Outlet context={[searchTerm, setSearchTerm]} />
-      <Footer style={{
+      <div className='content'>
+        <Outlet context={[searchTerm, setSearchTerm]} />
+      </div>
+      <Footer className='footer' style={{
         textAlign: 'center',
       }}> React Shop ©{new Date().getFullYear()} Created by Lam Tien Duong</Footer>
     </div>

@@ -9,9 +9,9 @@ const RegisterPage = () => {
     const [isSubmit, setIsSubmit] = useState(false);
 
     const onFinish = async (values) => {
-        const { name, email, password, phone } = values;
+        const { name, email, password} = values;
         setIsSubmit(true);
-        const res = await callRegister(name, email, password, phone);
+        const res = await callRegister(name, email, password);
         setIsSubmit(false);
         if (res?.data?.id) {
             message.success('Đăng ký tài khoản thành công!');
@@ -38,7 +38,6 @@ const RegisterPage = () => {
                         </div>
                         <Form
                             name="basic"
-                            // style={{ maxWidth: 600, margin: '0 auto' }}
                             onFinish={onFinish}
                             autoComplete="off"
                         >
@@ -48,40 +47,67 @@ const RegisterPage = () => {
                                 name="name"
                                 rules={[{ required: true, message: 'Họ tên không được để trống!' }]}
                             >
-                                <Input />
+                                <Input id='username'/>
                             </Form.Item>
-
-
                             <Form.Item
                                 labelCol={{ span: 24 }} //whole column
                                 label="Email"
                                 name="email"
-                                rules={[{ required: true, message: 'Email không được để trống!' }]}
+                                rules={[
+                                    { required: true, message: 'Email không được để trống!' },
+                                    {
+                                        type: 'email',
+                                        message: 'Email nhập vào không hợp lệ!',
+                                    },
+                                ]}
                             >
-                                <Input />
+                                <Input id='email'/>
                             </Form.Item>
 
                             <Form.Item
                                 labelCol={{ span: 24 }} //whole column
                                 label="Mật khẩu"
                                 name="password"
-                                rules={[{ required: true, message: 'Mật khẩu không được để trống!' }]}
+                                rules={[
+                                    { required: true, message: 'Mật khẩu không được để trống!' },
+                                    {
+                                        pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$/,
+                                        message: "Phải chứa ít nhất 1 kí tự thường, 1 kí tự hóa, chữ số và có độ dài >= 8"
+                                    }
+                                ]}
                             >
-                                <Input.Password />
+                                <Input.Password id='password'/>
                             </Form.Item>
                             <Form.Item
+                                labelCol={{ span: 24 }} //whole column
+                                label="Nhập lại mật khẩu"
+                                name="confirmPassword"
+                                rules={[
+                                    { required: true, message: 'Mật khẩu nhập lại không được để trống!' },
+                                    ({ getFieldValue }) => ({
+                                        validator(_, value) {
+                                            if (!value || getFieldValue('password') === value) {
+                                                return Promise.resolve();
+                                            }
+                                            return Promise.reject("Mật khẩu nhập lại không khớp");
+                                        }
+                                    })
+                                ]}
+                            >
+                                <Input.Password id='confirmPassword'/>
+                            </Form.Item>
+                            {/* <Form.Item
                                 labelCol={{ span: 24 }} //whole column
                                 label="Số điện thoại"
                                 name="phone"
                                 rules={[{ required: true, message: 'Số điện thoại không được để trống!' }]}
                             >
                                 <Input />
-                            </Form.Item>
-
+                            </Form.Item> */}
                             <Form.Item
                             // wrapperCol={{ offset: 6, span: 16 }}
                             >
-                                <Button type="primary" htmlType="submit" loading={isSubmit}>
+                                <Button id='btn-submit' type="primary" htmlType="submit" loading={isSubmit}>
                                     Đăng ký
                                 </Button>
                             </Form.Item>
