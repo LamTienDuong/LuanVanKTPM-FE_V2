@@ -1,9 +1,15 @@
-import React, { useEffect, useState } from 'react';
-import { Table, Row, Col, Popconfirm, Button, message, notification } from 'antd';
+import React, { useEffect, useRef, useState } from 'react';
+import { Table, Row, Col, Popconfirm, Button, message, notification, Select, Modal } from 'antd';
 import { callFetchListOrder } from '../../../services/api';
 import { CloudUploadOutlined, DeleteTwoTone, EditTwoTone, ExportOutlined, PlusOutlined, ReloadOutlined } from '@ant-design/icons';
 import moment from 'moment/moment';
 import { FORMAT_DATE_DISPLAY } from '../../../utils/constant';
+import { FaEye } from 'react-icons/fa';
+import { useReactToPrint } from 'react-to-print';
+import { CiExport } from 'react-icons/ci';
+import OrderModalDetail from './OrderModalDetail';
+import OrderModalExport from './OrderModalExport';
+
 // https://stackblitz.com/run?file=demo.tsx
 const MangeOrder = () => {
     const [listOrder, setListOrder] = useState([]);
@@ -13,20 +19,29 @@ const MangeOrder = () => {
 
     const [isLoading, setIsLoading] = useState(false);
     const [filter, setFilter] = useState("");
-    const [sortQuery, setSortQuery] = useState("sort=-createdAt");
+    const [sortQuery, setSortQuery] = useState("");
+
+    const [status, setStatus] = useState("");
+
+    const [modalOpenDetail, setModalOpenDetail] = useState(false);
+    const [dataDetail, setDataDetail] = useState(null);
+    const [itemDetail, setItemDetail] = useState(null);
+
+    const [modalOpenExport, setModalOpenExport] = useState(false);
+    const [dataExport, setDataExport] = useState(null);
+    const [itemExport, setItemExport] = useState(null);
+   
 
     useEffect(() => {
         fetchOrder();
-    }, [current, pageSize, filter, sortQuery]);
+    }, [current, pageSize, filter, sortQuery, status]);
 
     const fetchOrder = async () => {
         setIsLoading(true)
         let query = `current=${current}&pageSize=${pageSize}`;
-        if (filter) {
-            query += `&${filter}`;
-        }
-        if (sortQuery) {
-            query += `&${sortQuery}`;
+
+        if (status) {
+            query += `&filter=status ~ '${status}'`
         }
 
         const res = await callFetchListOrder(query);
@@ -46,26 +61,36 @@ const MangeOrder = () => {
                     <a href='#' onClick={() => {
                         // setDataViewDetail(record);
                         // setOpenViewDetail(true);
-                    }}>{record._id}</a>
+                    }}>{record.code}</a>
                 )
             }
         },
         {
-            title: 'Trạng thái',
-            dataIndex: 'totalPrice',
+            title: 'Tên khách hàng',
+            dataIndex: 'user',
             render: (text, record, index) => {
                 return (
-                    <>{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(record.totalPrice)}</>
+                    <>{record.name}</>
 
                 )
             },
         },
         {
-            title: 'Địa chỉ',
-            dataIndex: 'address',
+            title: 'Trạng thái',
+            dataIndex: 'status',
             render: (text, record, index) => {
                 return (
-                    <>{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(record.totalPrice)}</>
+                    <>{record.status}</>
+
+                )
+            },
+        },
+        {
+            title: 'Thanh toán',
+            dataIndex: 'payment',
+            render: (text, record, index) => {
+                return (
+                    <>{record.payment === 'online' ? 'Đã thanh toán' : 'Thanh toán khi nhận hàng'}</>
 
                 )
             },
@@ -75,7 +100,48 @@ const MangeOrder = () => {
             dataIndex: 'createdAt',
             render: (text, record, index) => {
                 return (
-                    <>{moment(record.updatedAt).format(FORMAT_DATE_DISPLAY)}</>
+                    <>{moment(record.createdAt).format(FORMAT_DATE_DISPLAY)}</>
+                )
+            }
+        },
+        {
+            title: 'Giá trị',
+            dataIndex: 'totalPrice',
+            render: (text, record, index) => {
+                return (
+                    <>{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(record.totalPrice)}</>
+
+                )
+            },
+        },
+        {
+            title: 'Thao tác',
+            dataIndex: 'action',
+            render: (text, record, index) => {
+                return (
+                    <>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '1.25rem' }}>
+                            <FaEye
+                                color='blue'
+                                cursor="pointer"
+                                fontSize='1rem'
+                                onClick={() => {
+                                    setModalOpenDetail(true);
+                                    setDataDetail(record);
+                                    setItemDetail(record.items)
+                                }} />
+                            <CiExport
+                                color='blue'
+                                cursor="pointer"
+                                fontSize='1.25rem' 
+                                onClick={() => {
+                                    setModalOpenExport(true);
+                                    setDataExport(record);
+                                    setItemExport(record.items)
+                                }}
+                                />
+                        </div>
+                    </>
                 )
             }
         },
@@ -96,6 +162,10 @@ const MangeOrder = () => {
         }
     };
 
+    const onChangeStatus = (value) => {
+        setStatus(value);
+    };
+
 
 
 
@@ -105,12 +175,34 @@ const MangeOrder = () => {
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                 <span>Danh sách đơn hàng</span>
                 <span style={{ display: 'flex', gap: 15 }}>
-                    <Button type='ghost' onClick={() => {
-                        setFilter("");
-                        setSortQuery("")
-                    }}>
-                        <ReloadOutlined />
-                    </Button>
+                    <Select
+                        allowClear
+                        placeholder="--Tất cả trạng thái--"
+                        optionFilterProp="label"
+                        onChange={onChangeStatus}
+                        options={[
+                            {
+                                value: 'Chờ xác nhận',
+                                label: 'Chờ xác nhận',
+                            },
+                            {
+                                value: 'Đã xác nhận',
+                                label: 'Đã xác nhận',
+                            },
+                            {
+                                value: 'Chờ giao hàng',
+                                label: 'Chờ giao hàng',
+                            },
+                            {
+                                value: 'Đang vận chuyển',
+                                label: 'Đang vận chuyển',
+                            },
+                            {
+                                value: 'Hoàn thành',
+                                label: 'Hoàn thành',
+                            },
+                        ]}
+                    />
                 </span>
             </div>
         )
@@ -120,6 +212,9 @@ const MangeOrder = () => {
         setFilter(query);
     }
 
+
+
+    
 
     return (
         <>
@@ -137,15 +232,31 @@ const MangeOrder = () => {
                             {
                                 current: current,
                                 pageSize: pageSize,
-                                showSizeChanger: true,
+                                // showSizeChanger: true,
                                 total: total,
-                                showTotal: (total, range) => { return (<div> {range[0]}-{range[1]} trên {total} rows</div>) }
+                                // showTotal: (total, range) => { return (<div> {range[0]}-{range[1]} trên {total} rows</div>) }
                             }
                         }
-
                     />
                 </Col>
             </Row>
+            <OrderModalDetail
+                modalOpenDetail={modalOpenDetail}
+                setModalOpenDetail={setModalOpenDetail}
+                dataDetail={dataDetail}
+                setDataDetail={setDataDetail}
+                itemDetail={itemDetail}
+                setItemDetail={setItemDetail}
+                fetchOrder={fetchOrder}
+            />
+            <OrderModalExport
+                modalOpenExport={modalOpenExport}
+                setModalOpenExport={setModalOpenExport}
+                dataExport={dataExport}
+                setDataExport={setDataExport}
+                itemExport={itemExport}
+                setItemExport={setItemExport}
+            />
         </>
     )
 }

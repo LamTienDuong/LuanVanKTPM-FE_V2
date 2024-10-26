@@ -152,7 +152,6 @@ const ProductModalCreate = (props) => {
         });
     };
 
-    // console.log(listCategory);
     
 
     return (

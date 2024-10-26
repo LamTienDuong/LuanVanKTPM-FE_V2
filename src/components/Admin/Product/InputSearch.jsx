@@ -82,7 +82,7 @@ const InputSearch = (props) => {
                         name={`name`}
                         label={`Tên sản phẩm`}
                     >
-                        <Input />
+                        <Input  placeholder="Nhập tên sản phẩm"/>
                     </Form.Item>
                 </Col>
                 <Col span={6}>
@@ -93,6 +93,7 @@ const InputSearch = (props) => {
                     >
                         <Select
                             defaultValue={null}
+                             placeholder="Chọn thể loại"
                             showSearch
                             allowClear
                             //  onChange={handleChange}

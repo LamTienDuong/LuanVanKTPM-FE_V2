@@ -83,7 +83,6 @@ const ProductModalUpdate = (props) => {
 
 
     const onFinish = async (values) => {
-        // console.log(values);
 
         if (dataThumbnail.length === 0) {
             notification.error({

@@ -121,6 +121,10 @@ export const callPlaceOrder = (data) => {
     })
 }
 
+export const updateStatusOrder = (id, status) => {
+    return axios.put('/api/v1/orders/status', {id, status})
+}
+
 export const callOrderHistory = (id, current, pageSize, filter) => {
     return axios.get(`/api/v1/history?&page=${current}&size=${pageSize}&filter=userId : ${id} and status ~ '${filter}'`);
 }

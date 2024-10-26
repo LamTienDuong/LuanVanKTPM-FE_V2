@@ -92,7 +92,7 @@ const Home = () => {
     }
 
     const handleChangeFilter = (changedValues, values) => {
-        console.log(">>> check changedValues, values: ", changedValues, values);
+        // console.log(">>> check changedValues, values: ", changedValues, values);
         //only fire if category changes
         if (changedValues.category) {
             const cate = values.category;

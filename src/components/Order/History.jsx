@@ -25,7 +25,6 @@ const History = () => {
     const [filter, setFilter] = useState('');
 
     const onClick = (e) => {
-        console.log(e);
         if (e.key === 'Tất cả') {
             setFilter('');
         } else {
@@ -55,8 +54,16 @@ const History = () => {
             key: 'Chờ xác nhận',
         },
         {
+            label: 'Đã xác nhận',
+            key: 'Đã xác nhận',
+        },
+        {
             label: 'Chờ vận chuyển',
             key: 'Chờ vận chuyển',
+        },
+        {
+            label: 'Đang vận chuyển',
+            key: 'Đang vận chuyển',
         },
         {
             label: 'Hoàn thành',
