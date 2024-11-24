@@ -218,7 +218,8 @@ const History = () => {
                 </div>
             </div>
             <div className="modal">
-                <Modal title="Chi tiết đơn hàng"
+                <Modal 
+                    title="Chi tiết đơn hàng"
                     style={{ top: 20 }}
                     open={isModalOpen}
                     width="700px"
@@ -227,7 +228,7 @@ const History = () => {
                     cancelText="Đóng"
                     maskClosable={false}
                     okButtonProps={{ style: { display: 'none' } }}>
-                    <Row>
+                    <Row id="history_detail">
                         <Col span={8}>
                             <div className="title">
                                 Mã hóa đơn:

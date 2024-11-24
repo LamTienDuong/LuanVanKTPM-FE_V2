@@ -46,6 +46,7 @@ const Header = (props) => {
         },
         {
             label: <label
+                id='logout'
                 style={{ cursor: 'pointer' }}
                 onClick={() => handleLogout()}
             >Đăng xuất</label>,

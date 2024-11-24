@@ -48,7 +48,7 @@ const ViewOrder = (props) => {
             title: 'Số lượng',
             dataIndex: 'quantity',
             key: 'quantity',
-            render: (_, record) => (
+            render: (text, record, index) => (
                 <div className='quantity'>
                     <InputNumber onChange={(value) => handleOnChangeInput(value, record)} value={record.quantity} />
                 </div>
@@ -66,10 +66,10 @@ const ViewOrder = (props) => {
         {
             title: 'Thao tác',
             key: 'action',
-            render: (_, record) => (
+            render: (text, record, index) => (
                 <DeleteTwoTone
                     style={{ cursor: "pointer" }}
-                    onClick={() => dispatch(doDeleteItemCartAction({ id: record.id }))}
+                    onClick={() => dispatch(doDeleteItemCartAction({ id: index }))}
                     twoToneColor="#eb2f96"
                 />
             ),
@@ -158,7 +158,7 @@ const ViewOrder = (props) => {
                         </span>
                     </div>
                     <Divider style={{ margin: "10px 0" }} />
-                    <button
+                    <button id='buy'
                         disabled={carts.length === 0}
                         onClick={() => props.setCurrentStep(1)}
                     >

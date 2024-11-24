@@ -81,7 +81,7 @@ const LayoutAdmin = () => {
             ]
         },
         {
-            label: <Link to='/admin/products'>Manage Product</Link>,
+            label: <Link id='manage_product' to='/admin/products'>Manage Product</Link>,
             key: 'products',
             icon: <ExceptionOutlined />
         },
@@ -106,6 +106,7 @@ const LayoutAdmin = () => {
         },
         {
             label: <label
+                id='logout'
                 style={{ cursor: 'pointer' }}
                 onClick={() => handleLogout()}
             >Đăng xuất</label>,

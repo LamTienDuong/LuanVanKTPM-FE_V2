@@ -21,7 +21,7 @@ export const orderSlice = createSlice({
             let carts = state.carts;
             const item = action.payload;
 
-            let isExistIndex = carts.findIndex(c => c.id === item.id);
+            let isExistIndex = carts.findIndex(c => c.id === item.id && c.size === item.size);
             if (isExistIndex > -1) {
                 carts[isExistIndex].quantity = carts[isExistIndex].quantity + item.quantity;
                 if (carts[isExistIndex].quantity > carts[isExistIndex].detail.quantity) {
@@ -52,8 +52,15 @@ export const orderSlice = createSlice({
             state.carts = carts;
         },
 
+        // doDeleteItemCartAction: (state, action) => {
+        //     state.carts = state.carts.filter(c => c.id !== action.payload.id);
+        // },
+
         doDeleteItemCartAction: (state, action) => {
-            state.carts = state.carts.filter(c => c.id !== action.payload.id);
+            state.carts = state.carts.filter((c, index) => {
+                if (index !== action.payload.id)
+                    return c;
+            });
         },
 
         doPlaceOrderAction: (state, action) => {

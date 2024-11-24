@@ -45,6 +45,17 @@ const OrderPage = (props) => {
         }
     }, []);
 
+    const validatePhone = (_, value) => {
+        if (value === undefined || value === null || value.trim().length == 0) {
+            return Promise.reject(new Error('Email không được để trống!'));
+        }
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{3,}$/;
+        if (!emailRegex.test(value)) {
+            return Promise.reject(new Error('Email nhập vào không hợp lệ!'));
+        }
+        return Promise.resolve();
+    };
+
     return (
         <div style={{ background: '#efefef', padding: "20px 0" }}>
             <div className="order-container" style={{ maxWidth: 1440, margin: '0 auto' }}>
@@ -93,7 +104,7 @@ const OrderPage = (props) => {
                     <Result
                         icon={<SmileOutlined />}
                         title="Đơn hàng đã được đặt thành công!"
-                        extra={<Button type="primary"
+                        extra={<Button id="link_history" type="primary"
                             onClick={() => navigate('/history')}
                         >Xem lịch sử</Button>}
                     />

@@ -21,12 +21,13 @@ const LoginPage = () => {
         if (res?.data) {
             localStorage.setItem('access_token', res.data.access_token);
             dispatch(doLoginAction(res.data.user))
-            message.success('Đăng nhập tài khoản thành công!');
+            message.success('Đăng nhập tài khoản thành công!', 5);
             navigate('/')
         } else {
             notification.error({
                 message: "Thông tin đăng nhập không hợp lệ",
                 description: "Tên đăng nhập hoặc mật khẩu không chính xác",
+                key: "1",
                 duration: 5
             })
         }
@@ -53,9 +54,15 @@ const LoginPage = () => {
                                 labelCol={{ span: 24 }} //whole column
                                 label="Email"
                                 name="username"
-                                rules={[{ required: true, message: 'Email không được để trống!' }]}
+                                rules={[
+                                    { required: true, message: 'Email không được để trống!' },
+                                    {
+                                        whitespace: true,
+                                        message: "Email không được để trống!"
+                                    },
+                                ]}
                             >
-                                <Input id='email'/>
+                                <Input id='email' />
                             </Form.Item>
 
                             <Form.Item
@@ -64,7 +71,7 @@ const LoginPage = () => {
                                 name="password"
                                 rules={[{ required: true, message: 'Mật khẩu không được để trống!' }]}
                             >
-                                <Input.Password id='password'/>
+                                <Input.Password id='password' />
                             </Form.Item>
                             <Form.Item
                             // wrapperCol={{ offset: 6, span: 16 }}

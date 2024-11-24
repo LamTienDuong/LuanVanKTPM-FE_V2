@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Col, Divider, Form, Input, InputNumber, message, Modal, notification, Row, Select, Upload } from 'antd';
+import { Button, Col, Divider, Form, Input, InputNumber, message, Modal, notification, Row, Select, Upload } from 'antd';
 import { callCreateAUser, callCreateBook, callFetchCategory, callUploadBookImg } from '../../../services/api';
 import { LoadingOutlined, PlusOutlined } from '@ant-design/icons'
 const ProductModalCreate = (props) => {
@@ -22,9 +22,12 @@ const ProductModalCreate = (props) => {
     const [previewImage, setPreviewImage] = useState('');
     const [previewTitle, setPreviewTitle] = useState('');
 
+    const [thumbnailErr, setThumbnailErr] = useState(false);
+    const [sliderErr, setSliderErr] = useState(false);
+
     useEffect(() => {
         const fetchCategory = async () => {
-            const res = await callFetchCategory();            
+            const res = await callFetchCategory();
             if (res && res.data) {
                 const d = res.data.result.map(item => {
                     return { label: item.name, value: item.id }
@@ -37,24 +40,40 @@ const ProductModalCreate = (props) => {
 
 
     const onFinish = async (values) => {
+        if (thumbnailErr) {
+            notification.error({
+                message: 'Thông báo',
+                description: 'Ảnh thumbnail phải là JPG hoặc PNG!'
+            })
+            return;
+        }
+
+        if (sliderErr) {
+            notification.error({
+                message: 'Thông báo',
+                description: 'Ảnh slider phải là JPG hoặc PNG!'
+            })
+            return;
+        }
+
         if (dataThumbnail.length === 0) {
             notification.error({
-                message: 'Lỗi validate',
-                description: 'Vui lòng upload ảnh thumbnail'
+                message: 'Thông báo',
+                description: 'Vui lòng upload ảnh thumbnail!'
             })
             return;
         }
         if (dataSlider.length === 0) {
             notification.error({
-                message: 'Lỗi validate',
-                description: 'Vui lòng upload ảnh slider'
+                message: 'Thông báo',
+                description: 'Vui lòng upload ảnh slider!'
             })
             return;
         }
-        const { name, price, category, quantity, sold} = values;
+        const { name, price, category, quantity, sold } = values;
         const thumbnail = dataThumbnail[0].name;
         const slider = dataSlider.map(item => item.name);
-        
+
         setIsSubmit(true)
         const res = await callCreateBook(thumbnail, slider, name, price, sold, quantity, category);
         if (res && res.data) {
@@ -79,10 +98,24 @@ const ProductModalCreate = (props) => {
         reader.readAsDataURL(img);
     };
 
-    const beforeUpload = (file) => {
+    const beforeUploadThumbnail = (file) => {
         const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
         if (!isJpgOrPng) {
-            message.error('You can only upload JPG/PNG file!');
+            setThumbnailErr(true);
+            // message.error('You can only upload JPG/PNG file!');
+        }
+        const isLt2M = file.size / 1024 / 1024 < 2;
+        if (!isLt2M) {
+            message.error('Image must smaller than 2MB!');
+        }
+        return isJpgOrPng && isLt2M;
+    };
+
+    const beforeUploadSlider = (file) => {
+        const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
+        if (!isJpgOrPng) {
+            setSliderErr(true);
+            // message.error('You can only upload JPG/PNG file!');
         }
         const isLt2M = file.size / 1024 / 1024 < 2;
         if (!isLt2M) {
@@ -108,7 +141,7 @@ const ProductModalCreate = (props) => {
 
     const handleUploadFileThumbnail = async ({ file, onSuccess, onError }) => {
         const res = await callUploadBookImg(file);
-         
+
         if (res && res.data) {
             setDataThumbnail([{
                 name: res.data.fileName,
@@ -152,7 +185,31 @@ const ProductModalCreate = (props) => {
         });
     };
 
-    
+    const validatePrice = (_, value) => {
+        if (value === undefined || value === null) {
+            return Promise.reject(new Error('Vui lòng nhập giá tiền!'));
+        }
+        if (!Number.isInteger(+value)) {
+            return Promise.reject(new Error('Giá tiền phải là số nguyên!'));
+        }
+        if (+value <= 0) {
+            return Promise.reject(new Error('Giá tiền phải lớn hơn 0!'));
+        }
+        return Promise.resolve();
+    };
+
+    const validateQuantity = (_, value) => {
+        if (value === undefined || value === null) {
+            return Promise.reject(new Error('Vui lòng nhập số lượng!'));
+        }
+        if (!Number.isInteger(+value)) {
+            return Promise.reject(new Error('Số lượng phải là số nguyên!'));
+        }
+        if (+value <= 0) {
+            return Promise.reject(new Error('Số lượng phải lớn hơn 0!'));
+        }
+        return Promise.resolve();
+    };
 
     return (
         <>
@@ -160,18 +217,37 @@ const ProductModalCreate = (props) => {
             <Modal
                 title="Thêm mới sản phẩm"
                 open={openModalCreate}
-                onOk={() => { form.submit() }}
+                // onOk={() => { form.submit() }}
                 onCancel={() => {
                     form.resetFields();
                     setOpenModalCreate(false)
                 }}
-                okText={"Tạo mới"}
-                cancelText={"Hủy"}
+                // okText={"Tạo mới"}
+                // cancelText={"Hủy"}
                 confirmLoading={isSubmit}
                 width={"50vw"}
-                style={{top: 20}}
+                style={{ top: 20 }}
                 //do not close when click fetchBook
                 maskClosable={false}
+                footer={[
+                    <Button
+                        id="cancel"
+                        key="cancel"
+                        onClick={() => {
+                            form.resetFields();
+                            setOpenModalCreate(false)
+                        }}>
+                        Hủy
+                    </Button>,
+                    <Button
+                        id="submit"
+                        key="submit"
+                        type="primary"
+                        onClick={() => { form.submit() }}>
+                        Tạo Mới
+                    </Button>,
+
+                ]}
             >
                 <Divider />
 
@@ -187,29 +263,24 @@ const ProductModalCreate = (props) => {
                                 labelCol={{ span: 24 }}
                                 label="Tên sản phẩm"
                                 name="name"
-                                rules={[{ required: true, message: 'Vui lòng nhập tên sản phẩm!' }]}
+                                rules={[
+                                    {
+                                        whitespace: true,
+                                        message: "Vui lòng nhập tên sản phẩm!"
+                                    },
+                                    { required: true, message: 'Vui lòng nhập tên sản phẩm!' }]}
                             >
                                 <Input />
                             </Form.Item>
                         </Col>
-                        {/* <Col span={12}>
-                            <Form.Item
-                                labelCol={{ span: 24 }}
-                                label="Tác giả"
-                                name="author"
-                                rules={[{ required: true, message: 'Vui lòng nhập tác giả!' }]}
-                            >
-                                <Input />
-                            </Form.Item>
-                        </Col> */}
                         <Col span={12}>
                             <Form.Item
                                 labelCol={{ span: 24 }}
                                 label="Giá tiền"
                                 name="price"
-                                rules={[{ required: true, message: 'Vui lòng nhập giá tiền!' }]}
+                                rules={[{ validator: validatePrice }]}
                             >
-                                <InputNumber
+                                <Input
                                     min={0}
                                     style={{ width: '100%' }}
                                     formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
@@ -238,9 +309,10 @@ const ProductModalCreate = (props) => {
                                 labelCol={{ span: 24 }}
                                 label="Số lượng"
                                 name="quantity"
-                                rules={[{ required: true, message: 'Vui lòng nhập số lượng!' }]}
+                                rules={[{ validator: validateQuantity }]}
                             >
-                                <InputNumber min={1} style={{ width: '100%' }} />
+                                <Input
+                                    min={1} style={{ width: '100%' }} />
                             </Form.Item>
                         </Col>
                         <Col span={12}>
@@ -251,7 +323,7 @@ const ProductModalCreate = (props) => {
                                 rules={[{ required: true, message: 'Vui lòng nhập số lượng đã bán!' }]}
                                 initialValue={0}
                             >
-                                <InputNumber min={0} defaultValue={0} style={{ width: '100%' }} />
+                                <InputNumber min={0} defaultValue={0} style={{ width: '100%' }} disabled />
                             </Form.Item>
                         </Col>
                         <Col span={12}>
@@ -261,13 +333,14 @@ const ProductModalCreate = (props) => {
                                 name="thumbnail"
                             >
                                 <Upload
+                                    id='thumbnail'
                                     name="thumbnail"
                                     listType="picture-card"
                                     className="avatar-uploader"
                                     maxCount={1}
                                     multiple={false}
                                     customRequest={handleUploadFileThumbnail}
-                                    beforeUpload={beforeUpload}
+                                    beforeUpload={beforeUploadThumbnail}
                                     onChange={handleChange}
                                     onRemove={(file) => handleRemoveFile(file, "thumbnail")}
                                     onPreview={handlePreview}
@@ -287,12 +360,13 @@ const ProductModalCreate = (props) => {
                                 name="slider"
                             >
                                 <Upload
+                                    id='slider'
                                     multiple
                                     name="slider"
                                     listType="picture-card"
                                     className="avatar-uploader"
                                     customRequest={handleUploadFileSlider}
-                                    beforeUpload={beforeUpload}
+                                    beforeUpload={beforeUploadSlider}
                                     onChange={(info) => handleChange(info, 'slider')}
                                     onRemove={(file) => handleRemoveFile(file, "slider")}
                                     onPreview={handlePreview}

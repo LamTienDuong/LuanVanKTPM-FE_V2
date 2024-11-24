@@ -77,7 +77,7 @@ const ProductTable = () => {
             sorter: true,
             render: (text, record, index) => {
                 return (
-                    <a href='#' onClick={() => {
+                    <a className='product-name' href='#' onClick={() => {
                         setDataViewDetail(record);
                         setOpenViewDetail(true);
                     }}>{record.name}</a>
@@ -201,7 +201,7 @@ const ProductTable = () => {
                         onClick={() => handleExportData()}
                     >Export</Button>
 
-                    <Button
+                    <Button id='add_product'
                         icon={<PlusOutlined />}
                         type="primary"
                         onClick={() => setOpenModalCreate(true)}

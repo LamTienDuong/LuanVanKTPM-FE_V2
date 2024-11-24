@@ -5,6 +5,8 @@ import { Link, useNavigate, useOutletContext } from 'react-router-dom';
 import { callFetchCategory, callFetchListBook } from '../../services/api';
 import './home.scss';
 import MobileFilter from './MobileFilter';
+import { FaStar } from "react-icons/fa";
+import Rating from './Rating';
 const Home = () => {
     const [searchTerm, setSearchTerm] = useOutletContext();
 
@@ -189,22 +191,6 @@ const Home = () => {
         <>
             <div style={{ background: '#efefef', padding: "20px 0" }}>
                 <div className="homepage-container" style={{ maxWidth: 1440, margin: '0 auto' }}>
-                    {/* <Breadcrumb
-                        style={{ margin: '5px 0' }}
-                        items={[
-                            {
-                                // href: '#',
-                                title: <HomeOutlined />,
-                            },
-                            {
-                                title: (
-                                    <Link to={'/'}>
-                                        <span>Trang Chủ</span>
-                                    </Link>
-                                ),
-                            }
-                        ]}
-                    /> */}
                     <Row gutter={[20, 20]}>
                         <Col md={4} sm={0} xs={0}>
                             <div style={{ padding: "20px", background: '#fff', borderRadius: 5 }}>
@@ -317,17 +303,23 @@ const Home = () => {
                                             return (
                                                 <div id={`product-${index}`} className="column" key={`book-${index}`} onClick={() => handleRedirectBook(item)}>
                                                     <div className='wrapper'>
-                                                        <div className='thumbnail'>
-                                                            <img src={`${import.meta.env.VITE_BACKEND_URL}/images/product/${item.thumbnail}`} alt="thumbnail book" />
+                                                        <div className='group_content'>
+                                                            <div className='thumbnail'>
+                                                                <img src={`${import.meta.env.VITE_BACKEND_URL}/images/product/${item.thumbnail}`} alt="thumbnail book" />
+                                                            </div>
+                                                            <div className='text' title={item.name}>{item.name}</div>
+                                                            <div className='price'>
+                                                                {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(item?.price ?? 0)}
+                                                            </div>
                                                         </div>
-                                                        <div className='text' title={item.name}>{item.name}</div>
-                                                        <div className='price'>
-                                                            {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(item?.price ?? 0)}
+                                                        <div className='group_rating'>
+                                                            <div className='rating'>
+                                                                {/* <Rate value={1} disabled style={{ color: '#ffce3d', fontSize: 10 }} /> */}
+                                                                <Rating rating={item.id}/>
+                                                                <span>Đã bán {item.sold}</span>
+                                                            </div>
                                                         </div>
-                                                        <div className='rating'>
-                                                            <Rate value={5} disabled style={{ color: '#ffce3d', fontSize: 10 }} />
-                                                            <span>Đã bán {item.sold}</span>
-                                                        </div>
+
                                                     </div>
                                                 </div>
                                             )

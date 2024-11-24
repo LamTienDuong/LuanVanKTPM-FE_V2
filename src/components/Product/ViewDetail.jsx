@@ -148,8 +148,8 @@ const ViewDetail = (props) => {
         dispatch(doAddBookAction({ quantity, size: size, detail: book, id: book.id }))
     }
 
-    const handleBuyNow = (quantity, book) => {
-        dispatch(doAddBookAction({ quantity, detail: book, _id: book._id }))
+    const handleBuyNow = (quantity,size, book) => {
+        dispatch(doAddBookAction({ quantity, size: size, detail: book, id: book.id }))
         navigate('/order');
     }
 
@@ -243,9 +243,9 @@ const ViewDetail = (props) => {
                                     <div className='quantity'>
                                         <span className='left-side'>Số lượng</span>
                                         <span className='right-side'>
-                                            <button onClick={() => handleChangeButton('MINUS')} ><MinusOutlined /></button>
-                                            <input onChange={(event) => handleChangeInput(event.target.value)} value={currentQuantity} />
-                                            <button onClick={() => handleChangeButton('PLUS')}><PlusOutlined /></button>
+                                            <button id='minus' onClick={() => handleChangeButton('MINUS')} ><MinusOutlined /></button>
+                                            <input id='value' onChange={(event) => handleChangeInput(event.target.value)} value={currentQuantity} />
+                                            <button id='plus' onClick={() => handleChangeButton('PLUS')}><PlusOutlined /></button>
                                         </span>
                                     </div>
                                     <div className='quantity'>
@@ -262,13 +262,13 @@ const ViewDetail = (props) => {
                                         </span>
                                     </div>
                                     <div className='buy'>
-                                        <button className='cart' onClick={() => handleAddToCart(currentQuantity, size, dataBook)}>
+                                        <button id='add-to-cart' className='cart' onClick={() => handleAddToCart(currentQuantity, size, dataBook)}>
                                             <BsCartPlus className='icon-cart' />
                                             <span>Thêm vào giỏ hàng</span>
                                         </button>
-                                        <button
+                                        <button id='add-now'
                                             className='now'
-                                            onClick={() => handleBuyNow(currentQuantity, dataBook)}
+                                            onClick={() => handleBuyNow(currentQuantity, size, dataBook)}
                                         >Mua ngay</button>
                                     </div>
                                 </Col>

@@ -9,21 +9,32 @@ const RegisterPage = () => {
     const [isSubmit, setIsSubmit] = useState(false);
 
     const onFinish = async (values) => {
-        const { name, email, password} = values;
+        const { name, email, password } = values;
         setIsSubmit(true);
-        const res = await callRegister(name, email, password);
+        const res = await callRegister(name.trim(), email, password);
         setIsSubmit(false);
         if (res?.data?.id) {
-            message.success('Đăng ký tài khoản thành công!');
+            message.success('Đăng ký tài khoản thành công!', 5);
             navigate('/login')
         } else {
+            // message.error('Email đã tồn tại!', 30);
             notification.error({
-                message: "Có lỗi xảy ra",
-                description:
-                    res.message && Array.isArray(res.message) ? res.message[0] : res.message,
+                message: "Thông báo!!!",
+                description: "Email đã tồn tại!",
                 duration: 5
             })
         }
+    };
+
+    const validateEmail = (_, value) => {
+        if (value === undefined || value === null || value.trim().length == 0) {
+            return Promise.reject(new Error('Email không được để trống!'));
+        }
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{3,}$/;
+        if (!emailRegex.test(value)) {
+            return Promise.reject(new Error('Email nhập vào không hợp lệ!'));
+        }
+        return Promise.resolve();
     };
 
 
@@ -45,23 +56,43 @@ const RegisterPage = () => {
                                 labelCol={{ span: 24 }} //whole column
                                 label="Họ tên"
                                 name="name"
-                                rules={[{ required: true, message: 'Họ tên không được để trống!' }]}
+                                rules={[
+                                    {
+                                        whitespace: true,
+                                        message: "Họ tên không được để trống!"
+                                    },
+                                    {
+                                        required: true,
+                                        message: 'Họ tên không được để trống!'
+                                    },
+                                    {
+                                        pattern: /^[a-zA-Zà-ỹ\s]+$/,
+                                        message: "Họ tên nhập vào không hợp lệ!"
+                                    }
+                                ]}
                             >
-                                <Input id='username'/>
+                                <Input id='username' />
                             </Form.Item>
                             <Form.Item
                                 labelCol={{ span: 24 }} //whole column
                                 label="Email"
                                 name="email"
                                 rules={[
-                                    { required: true, message: 'Email không được để trống!' },
-                                    {
-                                        type: 'email',
-                                        message: 'Email nhập vào không hợp lệ!',
+                                    {   required: true,
+                                        validator: validateEmail 
                                     },
+                                    // {
+                                    //     whitespace: true,
+                                    //     message: "Email không được để trống!"
+                                    // },
+                                    // { required: true, message: 'Email không được để trống!' },
+                                    // {
+                                    //     pattern: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{3,}$/,
+                                    //     message: "Email nhập vào không hợp lệ!"
+                                    // }
                                 ]}
                             >
-                                <Input id='email'/>
+                                <Input id='email' />
                             </Form.Item>
 
                             <Form.Item
@@ -69,14 +100,18 @@ const RegisterPage = () => {
                                 label="Mật khẩu"
                                 name="password"
                                 rules={[
+                                    {
+                                        whitespace: true,
+                                        message: "Mật khẩu không được để trống!"
+                                    },
                                     { required: true, message: 'Mật khẩu không được để trống!' },
                                     {
                                         pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$/,
-                                        message: "Phải chứa ít nhất 1 kí tự thường, 1 kí tự hóa, chữ số và có độ dài >= 8"
+                                        message: "Bao gồm ít nhất 1 kí tự thường; 1 kí tự hoa; chữ số và có độ dài >= 8!"
                                     }
                                 ]}
                             >
-                                <Input.Password id='password'/>
+                                <Input.Password id='password' />
                             </Form.Item>
                             <Form.Item
                                 labelCol={{ span: 24 }} //whole column
@@ -94,7 +129,7 @@ const RegisterPage = () => {
                                     })
                                 ]}
                             >
-                                <Input.Password id='confirmPassword'/>
+                                <Input.Password id='confirmPassword' />
                             </Form.Item>
                             {/* <Form.Item
                                 labelCol={{ span: 24 }} //whole column

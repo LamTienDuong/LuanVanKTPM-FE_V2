@@ -2,38 +2,54 @@
     .customize-row {
         display: flex;
         flex-wrap: wrap;
-        gap: 20px 10px; //gap 10px, có 5 items trên 1 row => 4*10 = 40px cần được bớt ở width. 40/5items = 8px => calc trừ đi 8px
+        padding: 10px;
+        background-color: #efefef;
+        border-radius: 5px;
+        gap: 10px 10px; //gap 10px, có 5 items trên 1 row => 4*10 = 40px cần được bớt ở width. 40/5items = 8px => calc trừ đi 8px
 
         .column {
             width: calc(20% - 8px);
 
             &:hover {
-                box-shadow: 0 0.0625rem 20px 0 rgba(0, 0, 0, .05);
+                box-shadow: 0 0.1rem 20px 0 rgba(0, 0, 0, .2);
                 -webkit-transform: translateY(-0.0625rem);
                 transform: translateY(-0.0625rem);
             }
 
             .wrapper {
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                height: 270px;
+                background-color: #ffffff;
                 cursor: pointer;
                 box-shadow: 0 0.0625rem 0.125rem 0 rgba(0, 0, 0, .1);
                 border-radius: 0.125rem;
                 padding: .3rem;
 
                 .text {
-                    padding: 0.5rem 0;
+                    padding: 0 .3rem;
                     font-size: 1rem;
                     // height: 50px;
                     display: -webkit-box;
-                    -webkit-line-clamp: 2;
-                    -webkit-box-orient: vertical;
-                    white-space: nowrap;
+                    // -webkit-line-clamp: 2;
+                    // -webkit-box-orient: vertical;
+                    white-space: pre-wrap;
                     overflow: hidden;
                     text-overflow: ellipsis;
                 }
 
+                .price {
+                    color: #ef4d55;
+                    padding: 0 .3rem;
+                    font-size: 1.2rem;
+                }
+
                 .rating {
                     display: flex;
+                    justify-content: space-between;
                     align-items: center;
+                    padding: 0 .3rem;
                     gap: 10px;
                 }
 

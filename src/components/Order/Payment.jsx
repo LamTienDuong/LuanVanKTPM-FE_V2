@@ -1,4 +1,4 @@
-import { Checkbox, Col, Divider, Form, Radio, Row, Select, message, notification } from 'antd';
+import { Checkbox, Col, Divider, Form, Radio, Row, Select, Table, message, notification } from 'antd';
 import { DeleteTwoTone, LoadingOutlined } from '@ant-design/icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
@@ -12,6 +12,8 @@ import './payment.scss'
 
 const Payment = (props) => {
     const carts = useSelector(state => state.order.carts);
+    console.log(carts);
+    
     const [totalPrice, setTotalPrice] = useState(0);
     const dispatch = useDispatch();
     const [isSubmit, setIsSubmit] = useState(false);
@@ -32,13 +34,46 @@ const Payment = (props) => {
 
     const options = [
         {
+            id: 'offline',
             label: 'Thanh toán khi nhận hàng',
             value: 'offline',
         },
         {
+            id: 'online',
             label: 'Thanh toán online',
             value: 'online',
         }
+    ];
+
+    const columns = [
+        {
+            title: 'Số lượng',
+            dataIndex: 'quantity',
+            key: 'quantity',
+            render: (_, record) =>
+                <div className='quantity'>
+                    {record.quantity}
+                </div>
+        },
+        {
+            title: 'Kích thước',
+            dataIndex: 'size',
+            key: 'size',
+            render: (_, record) =>
+                <div className='size'>
+                    {record.size}
+                </div>
+        },
+        {
+            title: 'Đơn giá',
+            dataIndex: 'price',
+            key: 'price',
+            render: (_, record) =>
+                <div className='title'>
+                    {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(record?.detail?.price)}
+                </div>
+        },
+
     ];
 
     const onChangePayment = (e) => {
@@ -214,7 +249,20 @@ const Payment = (props) => {
                                     label="Tên người nhận"
                                     name="name"
                                     initialValue={user?.name}
-                                    rules={[{ required: true, message: 'Tên người nhận không được để trống!' }]}
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: 'Tên người nhận không được để trống!'
+                                        },
+                                        {
+                                            whitespace: true,
+                                            message: 'Tên người nhận không được để trống!'
+                                        },
+                                        {
+                                            pattern: /^[a-zA-Zà-ỹ\s]+$/,
+                                            message: "Tên người nhận nhập vào không hợp lệ!"
+                                        }
+                                    ]}
                                 >
                                     <Input />
                                 </Form.Item>
@@ -226,7 +274,20 @@ const Payment = (props) => {
                                     label="Số điện thoại"
                                     name="phone"
                                     initialValue={user?.phone}
-                                    rules={[{ required: true, message: 'Số điện thoại không được để trống!' }]}
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: 'Số điện thoại không được để trống!'
+                                        },
+                                        {
+                                            whitespace: true,
+                                            message: 'Số điện thoại không được để trống!'
+                                        },
+                                        {
+                                            pattern: /^(0[1-9][0-9]{8}|((09|01[2|6|8|9]|03|07|08|05)[0-9]{8}))$/,
+                                            message: "Số điện thoại nhập vào không hợp lệ!"
+                                        }
+                                    ]}
                                 >
                                     <Input />
                                 </Form.Item>
@@ -286,9 +347,15 @@ const Payment = (props) => {
                                     labelCol={{ span: 24 }}
                                     label="Địa chỉ"
                                     name="address"
-                                    rules={[{ required: true, message: 'Địa chỉ không được để trống!' }]}
+                                    rules={[
+                                        {
+                                            whitespace: true,
+                                            message: "Địa chỉ không được để trống!"
+                                        },
+                                        { required: true, message: 'Địa chỉ không được để trống!' }]}
                                 >
                                     <TextArea
+                                        id='address'
                                         // autoFocus
                                         rows={4}
                                     />
@@ -320,6 +387,7 @@ const Payment = (props) => {
                     </div>
                     <Divider style={{ margin: "5px 0" }} />
                     <button
+                        id='order'
                         onClick={() => form.submit()}
                         disabled={isSubmit}
                     >
@@ -328,27 +396,35 @@ const Payment = (props) => {
                     </button>
                 </div>
             </Col>
-            <Col md={10} xs={24}>
+            <Col md={10} xs={0}>
                 {carts?.map((book, index) => {
                     const currentBookPrice = book?.detail?.price ?? 0;
                     return (
                         <div className='order-book' key={`index-${index}`}>
+                            <div className='title'>
+                                {book?.detail?.name}
+                            </div>
                             <div className='book-content'>
-                                <img src={`${import.meta.env.VITE_BACKEND_URL}/images/product/${book?.detail?.thumbnail}`} />
-                                <div className='title'>
-                                    {book?.detail?.name}
+                                <div className='book-content-img'>
+                                    <img src={`${import.meta.env.VITE_BACKEND_URL}/images/product/${book?.detail?.thumbnail}`} />
                                 </div>
-                                <div className='size'>
-                                    <span>Size: {book?.size}</span>
-                                </div>
-                                <div className='price'>
-                                    {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(currentBookPrice)}
+                                <div className='book-content-info'>
+                                    <Table columns={columns} dataSource={carts} pagination={false} />
+                                    {/* <div className='quantity'>
+                                        <div className='quantity-title'>Số lượng:</div>
+                                        <div className='quantity-number'>{book?.quantity}</div>
+                                    </div>
+                                    <div className='size'>
+                                        <div className='size-title'>Kích thước:</div>
+                                        <div className='size-number'>size {book?.size}</div>
+                                    </div>
+                                    <div className='price'>
+                                        <div className='price-title'>Giá tiền:</div>
+                                        <div className='price-number'>{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(currentBookPrice)}</div>
+                                    </div> */}
                                 </div>
                             </div>
-                            <div className='action'>
-                                <div className='quantity'>
-                                    Số lượng: {book?.quantity}
-                                </div>
+                            {/* <div className='action'>
                                 <div className='sum'>
                                     Tổng:  {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(currentBookPrice * (book?.quantity ?? 0))}
                                 </div>
@@ -357,7 +433,7 @@ const Payment = (props) => {
                                     onClick={() => dispatch(doDeleteItemCartAction({ id: book.id }))}
                                     twoToneColor="#eb2f96"
                                 />
-                            </div>
+                            </div> */}
                         </div>
                     )
                 })}
