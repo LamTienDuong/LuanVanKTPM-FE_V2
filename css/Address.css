@@ -1,0 +1,17 @@
+.group-button {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+}
+.group-button #btn-close {
+  background-color: whitesmoke;
+  color: black;
+}
+.group-button #btn-close:hover {
+  background-color: rgb(214, 202, 202);
+}
+
+.number-address {
+  font-size: 1rem;
+}/*# sourceMappingURL=Address.css.map */

@@ -27,6 +27,7 @@
     "react-router-dom": "6.9.0",
     "react-spinners": "0.13.8",
     "react-to-print": "^3.0.2",
+    "recharts": "^2.13.3",
     "redux-persist": "6.0.0",
     "sass": "^1.79.4",
     "uuid": "9.0.0",

@@ -409,7 +409,7 @@ const Payment = (props) => {
                                     <img src={`${import.meta.env.VITE_BACKEND_URL}/images/product/${book?.detail?.thumbnail}`} />
                                 </div>
                                 <div className='book-content-info'>
-                                    <Table columns={columns} dataSource={carts} pagination={false} />
+                                    <Table columns={columns} dataSource={[book]} pagination={false} />
                                     {/* <div className='quantity'>
                                         <div className='quantity-title'>Số lượng:</div>
                                         <div className='quantity-number'>{book?.quantity}</div>

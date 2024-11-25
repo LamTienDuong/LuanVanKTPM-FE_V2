@@ -7,8 +7,8 @@ const RoleBaseRoute = (props) => {
     const user = useSelector(state => state.account.user);
     const userRole = user.role.name;
 
-    if (isAdminRoute && userRole === 'SUPER_ADMIN' ||
-        !isAdminRoute && (userRole === 'USER' || userRole === 'SUPER_ADMIN')
+    if (isAdminRoute && userRole === 'ADMIN' ||
+        !isAdminRoute && (userRole === 'USER' || userRole === 'ADMIN')
     ) {
         return (<>{props.children}</>)
     } else {

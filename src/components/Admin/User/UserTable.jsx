@@ -159,7 +159,7 @@ const UserTable = () => {
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                 <span>Table List Users</span>
                 <span style={{ display: 'flex', gap: 15 }}>
-                    <Button
+                    {/* <Button
                         icon={<ExportOutlined />}
                         type="primary"
                         onClick={() => handleExportData()}
@@ -169,7 +169,7 @@ const UserTable = () => {
                         icon={<CloudUploadOutlined />}
                         type="primary"
                         onClick={() => setOpenModalImport(true)}
-                    >Import</Button>
+                    >Import</Button> */}
 
                     <Button
                         icon={<PlusOutlined />}

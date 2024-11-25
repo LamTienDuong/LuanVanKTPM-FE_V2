@@ -54,7 +54,7 @@ const Header = (props) => {
         },
 
     ];
-    if (user?.role?.name === 'SUPER_ADMIN') {
+    if (user?.role?.name === 'ADMIN') {
         items.unshift({
             label: <Link to='/admin'>Trang quản trị</Link>,
             key: 'admin',

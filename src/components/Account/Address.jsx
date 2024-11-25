@@ -214,74 +214,95 @@ const Address = (props) => {
                                 onFinish={onFinish}
                                 form={form}
                             >
-                                <Form.Item
-                                    hidden
-                                    labelCol={{ span: 24 }}
-                                    label="id"
-                                    name="id"
-                                    initialValue={user?.id}
-                                >
-                                    <Input disabled />
-                                </Form.Item>
-                                <Form.Item
-                                    labelCol={{ span: 24 }}
-                                    label="Số điện thoại"
-                                    name="phone"
-                                    // initialValue={''}
-                                    rules={[
-                                        {
-                                            required: true,
-                                            message: 'Số điện thoại không được để trống!'
-                                        },
-                                        {
-                                            pattern: /^(\+84|0)(3[0-9]|7[0-9]|8[0-9]|9[0-9]|1[2|6|8|9]|5[6|9]|4[0|1|2|3|4|5|6|7|8|9]|2[0|1|2|3|4|5|6|7|8|9])[0-9]{7}$/,
-                                            message: "Số điện thoại không hợp lệ!"
-                                        }
-                                    ]}
-                                >
-                                    <Input />
-                                </Form.Item>
-                                <Form.Item
-                                    labelCol={{ span: 24 }}
-                                    label="Tỉnh/Thành phố"
-                                    name="province"
-                                    rules={[{ required: true, message: 'Tỉnh/Thành phố không được để trống!' }]}
-                                >
-                                    <Select
-                                        showSearch
-                                        allowClear
-                                        onChange={handleChangeProvince}
-                                        options={province}
-                                    />
-                                </Form.Item>
-                                <Form.Item
-                                    labelCol={{ span: 24 }}
-                                    label="Quận/Huyện"
-                                    name="district"
-                                    rules={[{ required: true, message: 'Quận/Huyện không được để trống!' }]}
-                                >
-                                    <Select
-                                        // defaultValue={null}
-                                        showSearch
-                                        allowClear
-                                        onChange={handleChangeDistrict}
-                                        options={district}
-                                    />
-                                </Form.Item>
-                                <Form.Item
-                                    labelCol={{ span: 24 }}
-                                    label="Xã/Phường"
-                                    name="ward"
-                                    rules={[{ required: true, message: 'Xã/Phường không được để trống!' }]}
-                                >
-                                    <Select
-                                        // defaultValue={null}
-                                        showSearch
-                                        allowClear
-                                        // onChange={handleChangeProvince}
-                                        options={ward}
-                                    />
-                                </Form.Item>
+                                <Row gutter={[20, 0]}>
+                                    <Col span={0}>
+                                        <Form.Item
+                                            hidden
+                                            labelCol={{ span: 24 }}
+                                            label="id"
+                                            name="id"
+                                            initialValue={user?.id}
+                                        >
+                                            <Input disabled />
+                                        </Form.Item>
+                                    </Col>
+
+                                    <Col span={12}>
+                                        <Form.Item
+                                            labelCol={{ span: 24 }}
+                                            label="Số điện thoại"
+                                            name="phone"
+                                            // initialValue={''}
+                                            rules={[
+                                                {
+                                                    required: true,
+                                                    message: 'Số điện thoại không được để trống!'
+                                                },
+                                                {
+                                                    pattern: /^(\+84|0)(3[0-9]|7[0-9]|8[0-9]|9[0-9]|1[2|6|8|9]|5[6|9]|4[0|1|2|3|4|5|6|7|8|9]|2[0|1|2|3|4|5|6|7|8|9])[0-9]{7}$/,
+                                                    message: "Số điện thoại không hợp lệ!"
+                                                }
+                                            ]}
+                                        >
+                                            <Input />
+                                        </Form.Item>
+                                    </Col>
+
+                                    <Col span={12}>
+                                        <Form.Item
+                                            labelCol={{ span: 24 }}
+                                            label="Tỉnh/Thành phố"
+                                            name="province"
+                                            rules={[{ required: true, message: 'Tỉnh/Thành phố không được để trống!' }]}
+                                        >
+                                            <Select
+                                                showSearch
+                                                allowClear
+                                                onChange={handleChangeProvince}
+                                                options={province}
+                                            />
+                                        </Form.Item>
+                                    </Col>
+
+                                    <Col span={12}>
+                                        <Form.Item
+                                            labelCol={{ span: 24 }}
+                                            label="Quận/Huyện"
+                                            name="district"
+                                            rules={[{ required: true, message: 'Quận/Huyện không được để trống!' }]}
+                                        >
+                                            <Select
+                                                // defaultValue={null}
+                                                showSearch
+                                                allowClear
+                                                onChange={handleChangeDistrict}
+                                                options={district}
+                                            />
+                                        </Form.Item>
+                                    </Col>
+
+                                    <Col span={12}>
+                                        <Form.Item
+                                            labelCol={{ span: 24 }}
+                                            label="Xã/Phường"
+                                            name="ward"
+                                            rules={[{ required: true, message: 'Xã/Phường không được để trống!' }]}
+                                        >
+                                            <Select
+                                                // defaultValue={null}
+                                                showSearch
+                                                allowClear
+                                                // onChange={handleChangeProvince}
+                                                options={ward}
+                                            />
+                                        </Form.Item>
+                                    </Col>
+                                </Row>
+
+
+
+
+
                                 <Form.Item
                                     style={{ margin: 0 }}
                                     labelCol={{ span: 24 }}

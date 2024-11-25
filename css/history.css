@@ -1,0 +1,49 @@
+.main-header {
+  margin: 20px 40px;
+  font-weight: 600;
+  font-size: 1.5rem;
+  font-style: normal;
+}
+
+.table {
+  margin: 0 2rem;
+}
+
+.menu {
+  margin: 0 2rem;
+  font-size: 1.25rem;
+  font-weight: 500;
+  margin-bottom: 0.9rem;
+}
+
+.action {
+  display: flex;
+  font-size: 1rem;
+  gap: 1.25rem;
+}
+.action .action-detail {
+  cursor: pointer;
+  padding: 0.5rem;
+  color: blue;
+}
+.action .action-edit {
+  cursor: pointer;
+  padding: 0.5rem;
+  color: red;
+}
+
+.title {
+  font-size: 0.8rem;
+  font-weight: bold;
+  font-style: normal;
+}
+
+.totalPrice {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-top: 1rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  font-style: normal;
+}/*# sourceMappingURL=history.css.map */
