@@ -14,6 +14,8 @@ import { createReviews, findAllReviews } from '../../services/api';
 
 const ViewDetail = (props) => {
     const { dataBook } = props;
+    console.log(dataBook);
+    
     const [form] = Form.useForm();
     const user = useSelector(state => state.account.user);
     const isAuthenticated = useSelector(state => state.account.isAuthenticated);

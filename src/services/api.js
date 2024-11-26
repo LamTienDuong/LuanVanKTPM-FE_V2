@@ -186,3 +186,11 @@ export const deleteAddress = (id) => {
 export const createOrder = (amount) => {
     return axios.get(`/api/v1/vn-pay?amount=${amount}`);
 }
+
+export const getOrdersInDay = (day, month, year, minus) => {
+    return axios.get(`/api/v1/orders/day?day=${day}&month=${month}&year=${year}&minus=${minus}`)
+}
+
+export const getAllCategory = () => {
+    return axios.get(`/api/v1/categories`);
+}

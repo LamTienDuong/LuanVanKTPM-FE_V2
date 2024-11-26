@@ -6,6 +6,7 @@ import { Line, LineChart } from "recharts";
 import SimpleBarChart from "../../components/Admin/Chart/SimpleBarChart";
 import '../../components/Admin/Chart/SimpleBarChart.scss';
 import SimpleLineChart from "../../components/Admin/Chart/LineChart";
+import SimplePieChart from "../../components/Admin/Chart/PieChart";
 
 const AdminPage = () => {
     const [dataDashboard, setDataDashboard] = useState({
@@ -50,12 +51,19 @@ const AdminPage = () => {
                     </Card>
                 </Col>
 
-                <Col className="simple-line-chart" span={24} style={{display: 'flex', justifyContent: 'center'}}>
-                    <SimpleLineChart/>
+                {/* <Col className="simple-line-chart" span={24} style={{ display: 'flex', justifyContent: 'center' }}>
+                    <div className="title">Phân loại số lượng sản phẩm</div>
+                    <SimplePieChart />
+                </Col> */}
+
+                <Col className="simple-line-chart" span={24} style={{ display: 'flex', justifyContent: 'center' }}>
+                    <div className="title">Thống kê doanh thu 7 ngày vừa qua</div>
+                    <SimpleLineChart />
                 </Col>
 
-                <Col className="simple-bar-chart" span={24} style={{display: 'flex', justifyContent: 'center'}}>
-                    <SimpleBarChart/>
+                <Col className="simple-bar-chart" span={24} style={{ display: 'flex', justifyContent: 'center' }}>
+                    <div className="title">Thống kê sản phẩm theo danh mục</div>
+                    <SimpleBarChart />
                 </Col>
             </Row>
 

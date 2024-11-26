@@ -77,10 +77,23 @@ const ProductTable = () => {
             sorter: true,
             render: (text, record, index) => {
                 return (
-                    <a className='product-name' href='#' onClick={() => {
-                        setDataViewDetail(record);
-                        setOpenViewDetail(true);
-                    }}>{record.name}</a>
+                    <>
+                        {record.active === true ?
+                            <a className='product-name' href='#' onClick={() => {
+                                setDataViewDetail(record);
+                                setOpenViewDetail(true);
+                            }}>{record.name}</a>
+                            :
+                            <a  style={{textDecoration: 'line-through'}}
+                                className='product-name'
+                                href='#' onClick={() => {
+                                    setDataViewDetail(record);
+                                    setOpenViewDetail(true);
+                                }}>{record.name}</a>
+                        }
+
+
+                    </>
                 )
             }
         },

@@ -67,7 +67,7 @@ const ProductModalUpdate = (props) => {
                 category: dataUpdate.category.name,
                 quantity: dataUpdate.quantity,
                 sold: dataUpdate.sold,
-                active: dataUpdate.active,
+                switch: dataUpdate.active,
                 thumbnail: { fileList: arrThumbnail },
                 slider: { fileList: arrSlider }
             }
@@ -103,7 +103,7 @@ const ProductModalUpdate = (props) => {
 
         const { id, name, price, category, active = values.switch, quantity, sold } = values;
         const thumbnail = dataThumbnail[0].name;
-        const slider = dataSlider.map(item => item.name);        
+        const slider = dataSlider.map(item => item.name);
         setIsSubmit(true)
         const res = await callUpdateBook(id, thumbnail, slider, name, price, category, active, quantity, sold);
         if (res && res.data) {
@@ -207,6 +207,7 @@ const ProductModalUpdate = (props) => {
             setPreviewTitle(file.name || file.url.substring(file.url.lastIndexOf('/') + 1));
         });
     };
+   
 
     return (
         <>
@@ -236,6 +237,7 @@ const ProductModalUpdate = (props) => {
                     name="basic"
                     onFinish={onFinish}
                     autoComplete="off"
+                    
                 >
                     <Row gutter={15}>
                         <Col hidden>
@@ -293,22 +295,22 @@ const ProductModalUpdate = (props) => {
                         <Col span={8}>
                             {/* <Form.Item
                                 labelCol={{ span: 24 }}
+                                name="switch"
                                 label="Active"
-                                name="active"
                                 valuePropName="checked"
-                                initialValue
-                            >
-                                <Space direction="vertical">
-                                    <Switch name="switch" checkedChildren="YES" unCheckedChildren="NO" />
-                                </Space>
+                                initialValue>
+                                <Switch
+                                    checkedChildren="YES"
+                                    unCheckedChildren="NO"
+                                />
                             </Form.Item> */}
 
                             <Form.Item
                                 labelCol={{ span: 24 }}
                                 name="switch"
                                 label="Active"
-                                valuePropName="checked"
-                                initialValue>
+                                valuePropName="checked" // Chỉ định rằng giá trị của Switch là checked
+                            >
                                 <Switch
                                     checkedChildren="YES"
                                     unCheckedChildren="NO"

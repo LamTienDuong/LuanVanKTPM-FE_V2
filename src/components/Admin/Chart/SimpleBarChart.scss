@@ -1,13 +1,36 @@
-.simple-bar-chart {
+.simple-line-chart {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
     max-width: 1030px;
     background-color: #ffffff;
     margin-left: 15px;
     border-radius: 10px;
+
+    .title {
+        text-align: center;
+        font-size: 1.2rem;
+        margin-top: 1rem;
+        margin-bottom: 2rem;
+    }
 }
 
-.simple-line-chart {
+
+.simple-bar-chart {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
     max-width: 1030px;
     background-color: #ffffff;
     margin-left: 15px;
     border-radius: 10px;
+
+    .title {
+        text-align: center;
+        font-size: 1.2rem;
+        margin-top: 1rem;
+        margin-bottom: 2rem;
+    }
 }
