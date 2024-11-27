@@ -1,7 +1,7 @@
 import { Card, Col, Row, Statistic } from "antd";
 import { useEffect, useState } from "react";
 import CountUp from 'react-countup';
-import { callFetchDashboard } from "../../services/api";
+import { callFetchDashboard, countOrderByStatus, countProduct, countUserByRole } from "../../services/api";
 import { Line, LineChart } from "recharts";
 import SimpleBarChart from "../../components/Admin/Chart/SimpleBarChart";
 import '../../components/Admin/Chart/SimpleBarChart.scss';
@@ -11,14 +11,39 @@ import SimplePieChart from "../../components/Admin/Chart/PieChart";
 const AdminPage = () => {
     const [dataDashboard, setDataDashboard] = useState({
         countOrder: 0,
-        countUser: 0
+        countUser: 0,
+        countProduct: 0
     });
 
 
     useEffect(() => {
         const initDashboard = async () => {
-            const res = await callFetchDashboard();
-            if (res && res.data) setDataDashboard(res.data)
+            const resOrder = await countOrderByStatus("Hoàn thành");
+            const resUser = await countUserByRole("USER");
+            const resProduct = await countProduct();
+            
+            if (resOrder.statusCode == 200) {
+                setDataDashboard(prevState => ({
+                    ...prevState, // giữ lại tất cả các giá trị cũ
+                    countOrder: resOrder.data // cập nhật countOrder với giá trị mới
+                }));
+            }
+
+            if (resUser.statusCode == 200) {
+                setDataDashboard(prevState => ({
+                    ...prevState, // giữ lại tất cả các giá trị cũ
+                    countUser: resUser.data // cập nhật countOrder với giá trị mới
+                }));
+            }
+
+            if (resProduct.statusCode == 200) {
+                setDataDashboard(prevState => ({
+                    ...prevState, // giữ lại tất cả các giá trị cũ
+                    countProduct: resProduct.data // cập nhật countOrder với giá trị mới
+                }));
+            }
+            
+            
         }
         initDashboard();
     }, []);
@@ -38,14 +63,14 @@ const AdminPage = () => {
                 </Col>
                 <Col span={8}>
                     <Card title="" bordered={false} >
-                        <Statistic title="Tổng Đơn hàng" value={dataDashboard.countOrder} precision={2} formatter={formatter} />
+                        <Statistic title="Tổng Đơn hàng đã hoàn thành" value={dataDashboard.countOrder} precision={2} formatter={formatter} />
                     </Card>
                 </Col>
                 <Col span={8}>
                     <Card title="" bordered={false} >
                         <Statistic
                             title="Tổng sản phẩm"
-                            value={dataDashboard.countUser}
+                            value={dataDashboard.countProduct}
                             formatter={formatter}
                         />
                     </Card>

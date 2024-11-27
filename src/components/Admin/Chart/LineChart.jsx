@@ -59,7 +59,6 @@ const SimpleLineChart = () => {
     }
   ]
 
-  console.log(listOrder);
 
   return (
     <>

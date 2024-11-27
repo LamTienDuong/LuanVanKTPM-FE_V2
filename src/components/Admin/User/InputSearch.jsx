@@ -13,36 +13,41 @@ const InputSearch = (props) => {
     };
 
     const onFinish = (values) => {
-        let query = "";
-        //build query
-        if (values.fullName) {
-            query += `&fullName=/${values.fullName}/i`
-        }
-        if (values.email) {
-            query += `&email=/${values.email}/i`
+        const { name, email, phone } = values;
+
+        let query = "filter=";
+        if (name) {
+            query += `name ~ '${values.name}'`;
         }
 
-        if (values.phone) {
-            query += `&phone=/${values.phone}/i`
+        if (name && email) {
+            query += ` and email ~ '${values.email}'`;
+
+        } else if (email) {
+            query += `email ~ '${values.email}'`;
         }
+
+        if ((name || email) && phone) {
+            query += ` and phone ~ '${values.phone}'`
+        } else if (phone) {
+            query += `phone  '${values.phone}'`
+        }
+        // if (values.fullName) {
+        //     query += `&fullName=/${values.fullName}/i`
+        // }
+        // if (values.email) {
+        //     query += `&email=/${values.email}/i`
+        // }
+
+        // if (values.phone) {
+        //     query += `&phone=/${values.phone}/i`
+        // }
 
         if (query) {
             props.handleSearch(query);
         }
 
-        //remove undefined
-        // https://stackoverflow.com/questions/25421233/javascript-removing-undefined-fields-from-an-object
-        // Object.keys(values).forEach(key => {
-        //     if (values[key] === undefined) {
-        //         delete values[key];
-        //     }
-        // });
 
-        // if (values && Object.keys(values).length > 0) {
-        //     // https://stackoverflow.com/questions/1714786/query-string-encoding-of-a-javascript-object
-        //     const params = new URLSearchParams(values).toString();
-        //     props.handleSearch(params);
-        // }
     };
 
     return (
@@ -51,7 +56,7 @@ const InputSearch = (props) => {
                 <Col span={8}>
                     <Form.Item
                         labelCol={{ span: 24 }}
-                        name={`fullName`}
+                        name={`name`}
                         label={`Name`}
                     >
                         <Input />

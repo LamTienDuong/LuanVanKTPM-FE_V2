@@ -10,6 +10,7 @@ const initialState = {
         role: "",
         avatar: "",
         id: "",
+        acttive: "",
         address: []
     },
     tempAvatar: ""
@@ -49,6 +50,7 @@ export const accountSlide = createSlice({
                 fullName: "",
                 role: "",
                 avatar: "",
+                active: "",
                 id: ""
             }
         },

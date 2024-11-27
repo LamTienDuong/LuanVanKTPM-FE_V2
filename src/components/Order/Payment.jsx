@@ -12,7 +12,6 @@ import './payment.scss'
 
 const Payment = (props) => {
     const carts = useSelector(state => state.order.carts);
-    console.log(carts);
     
     const [totalPrice, setTotalPrice] = useState(0);
     const dispatch = useDispatch();
@@ -233,6 +232,17 @@ const Payment = (props) => {
         setIsSubmit(false);
     }
 
+    const validatePhone = (_, value) => {
+        if (value === undefined || value === null || value.trim().length == 0) {
+            return Promise.reject(new Error('Số điện thoại không được để trống!'));
+        }
+        const phoneRegex = /^(0[1-9][0-9]{8}|((09|01[2|6|8|9]|03|07|08|05)[0-9]{8}))$/;
+        if (!phoneRegex.test(value)) {
+            return Promise.reject(new Error('Số điện thoại nhập vào không hợp lệ!'));
+        }
+        return Promise.resolve();
+    };
+
     return (
         <Row gutter={[20, 20]}>
             <Col md={14} xs={24} >
@@ -275,18 +285,21 @@ const Payment = (props) => {
                                     name="phone"
                                     initialValue={user?.phone}
                                     rules={[
-                                        {
-                                            required: true,
-                                            message: 'Số điện thoại không được để trống!'
+                                        {   required: true,
+                                            validator: validatePhone 
                                         },
-                                        {
-                                            whitespace: true,
-                                            message: 'Số điện thoại không được để trống!'
-                                        },
-                                        {
-                                            pattern: /^(0[1-9][0-9]{8}|((09|01[2|6|8|9]|03|07|08|05)[0-9]{8}))$/,
-                                            message: "Số điện thoại nhập vào không hợp lệ!"
-                                        }
+                                        // {
+                                        //     required: true,
+                                        //     message: 'Số điện thoại không được để trống!'
+                                        // },
+                                        // {
+                                        //     whitespace: true,
+                                        //     message: 'Số điện thoại không được để trống!'
+                                        // },
+                                        // {
+                                        //     pattern: /^(0[1-9][0-9]{8}|((09|01[2|6|8|9]|03|07|08|05)[0-9]{8}))$/,
+                                        //     message: "Số điện thoại nhập vào không hợp lệ!"
+                                        // }
                                     ]}
                                 >
                                     <Input />

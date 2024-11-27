@@ -20,7 +20,7 @@ const UserTable = () => {
 
     const [isLoading, setIsLoading] = useState(false);
     const [filter, setFilter] = useState("");
-    const [sortQuery, setSortQuery] = useState("");
+    const [sortQuery, setSortQuery] = useState("sort=name,asc");
 
     const [openModalCreate, setOpenModalCreate] = useState(false);
     const [openViewDetail, setOpenViewDetail] = useState(false);
@@ -37,7 +37,7 @@ const UserTable = () => {
 
     const fetchUser = async () => {
         setIsLoading(true)
-        let query = `current=${current}&pageSize=${pageSize}`;
+        let query = `page=${current}&size=${pageSize}`;
         if (filter) {
             query += `&${filter}`;
         }
@@ -46,6 +46,7 @@ const UserTable = () => {
         }
 
         const res = await callFetchListUser(query);
+
         if (res && res.data) {
             setListUser(res.data.result);
             setTotal(res.data.meta.total)
@@ -55,50 +56,69 @@ const UserTable = () => {
 
     const columns = [
         {
-            title: 'Id',
-            dataIndex: '_id',
+            title: 'ID',
+            dataIndex: 'id',
             render: (text, record, index) => {
                 return (
-                    <a href='#' onClick={() => {
-                        setDataViewDetail(record);
-                        setOpenViewDetail(true);
-                    }}>{record._id}</a>
+                    <p>{record.id}</p>
                 )
             }
         },
         {
-            title: 'Tên hiển thị',
-            dataIndex: 'fullName',
-            sorter: true
-        },
-        {
-            title: 'Email',
-            dataIndex: 'email',
-            sorter: true,
-        },
-        {
-            title: 'Số điện thoại',
-            dataIndex: 'phone',
-            sorter: true
-        },
-        {
-            title: 'Ngày cập nhật',
-            dataIndex: 'updatedAt',
-            sorter: true,
+            title: 'Tên khách hàng',
+            dataIndex: 'name',
             render: (text, record, index) => {
                 return (
-                    <>{moment(record.updatedAt).format(FORMAT_DATE_DISPLAY)}</>
+                    <>
+                       
+                        {
+                            record.active === true ?
+                                <a href='#'
+                                // onClick={() => {
+                                //     setDataViewDetail(record);
+                                //     setOpenViewDetail(true);
+                                // }}
+                                >{record.name}</a>
+                                :
+                                <a href='#'
+                                    style={{ textDecoration: 'line-through' }}
+                                // onClick={() => {
+                                //     setDataViewDetail(record);
+                                //     setOpenViewDetail(true);
+                                // }}
+                                >{record.name}</a>
+                        }
+                    </>
                 )
             }
 
         },
+        {
+            title: 'Email',
+            dataIndex: 'email',
+
+        },
+        {
+            title: 'Số điện thoại',
+            dataIndex: 'phone',
+
+        },
+        // {
+        //     title: 'Ngày cập nhật',
+        //     dataIndex: 'updatedAt',
+        //     render: (text, record, index) => {
+        //         return (
+        //             <>{moment(record.updatedAt).format(FORMAT_DATE_DISPLAY)}</>
+        //         )
+        //     }
+
+        // },
         {
             title: 'Action',
             render: (text, record, index) => {
                 return (
                     <>
-
-                        <Popconfirm
+                        {/* <Popconfirm
                             placement="leftTop"
                             title={"Xác nhận xóa user"}
                             description={"Bạn có chắc chắn muốn xóa user này ?"}
@@ -109,7 +129,7 @@ const UserTable = () => {
                             <span style={{ cursor: "pointer", margin: "0 20px" }}>
                                 <DeleteTwoTone twoToneColor="#ff4d4f" />
                             </span>
-                        </Popconfirm>
+                        </Popconfirm> */}
 
                         <EditTwoTone
                             twoToneColor="#f57800" style={{ cursor: "pointer" }}
@@ -157,25 +177,8 @@ const UserTable = () => {
     const renderHeader = () => {
         return (
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <span>Table List Users</span>
+                <span>Danh sách khách hàng</span>
                 <span style={{ display: 'flex', gap: 15 }}>
-                    {/* <Button
-                        icon={<ExportOutlined />}
-                        type="primary"
-                        onClick={() => handleExportData()}
-                    >Export</Button>
-
-                    <Button
-                        icon={<CloudUploadOutlined />}
-                        type="primary"
-                        onClick={() => setOpenModalImport(true)}
-                    >Import</Button> */}
-
-                    <Button
-                        icon={<PlusOutlined />}
-                        type="primary"
-                        onClick={() => setOpenModalCreate(true)}
-                    >Thêm mới</Button>
                     <Button type='ghost' onClick={() => {
                         setFilter("");
                         setSortQuery("")

@@ -7,7 +7,7 @@ export const callRegister = (name, email, password) => {
         email: email, 
         password: password,
         role: {
-            id: 1
+            id: 2
         }
     }
     return axios.post('/api/v1/auth/register', data)
@@ -27,7 +27,7 @@ export const callLogout = () => {
 
 export const callFetchListUser = (query) => {
     // current=1&pageSize=3
-    return axios.get(`/api/v1/user?${query}`)
+    return axios.get(`/api/v1/users?${query}`)
 }
 
 export const callCreateAUser = (fullName, password, email, phone) => {
@@ -35,11 +35,15 @@ export const callCreateAUser = (fullName, password, email, phone) => {
 }
 
 export const callBulkCreateUser = (data) => {
-    return axios.post('/api/v1/user/bulk-create', data)
+    return axios.post('/api/v1/user/bulk-create', data);
 }
 
-export const callUpdateUser = (_id, fullName, phone) => {
-    return axios.put('/api/v1/user', { _id, fullName, phone })
+export const callUpdateUser = (id, name, phone, email, role) => {
+    return axios.put('/api/v1/user', { id, name, phone, email, role });
+}
+
+export const callUpdateUserFromAdmin = (id, active) => {
+    return axios.put('/api/v1/users/admin', { id, active});
 }
 
 export const callDeleteUser = (id) => {
@@ -193,4 +197,16 @@ export const getOrdersInDay = (day, month, year, minus) => {
 
 export const getAllCategory = () => {
     return axios.get(`/api/v1/categories`);
+}
+
+export const countProduct = () => {
+    return axios.get(`/api/v1/products/quantity`);
+}
+
+export const countUserByRole = (roleName) => {
+    return axios.get(`/api/v1/users/quantity?roleName=${roleName}`);
+}
+
+export const countOrderByStatus = (status) => {
+    return axios.get(`/api/v1/orders/quantity?status=${status}`);
 }
