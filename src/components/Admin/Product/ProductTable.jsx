@@ -2,13 +2,16 @@ import React, { useEffect, useState } from 'react';
 import { Table, Row, Col, Popconfirm, Button, message, notification } from 'antd';
 import InputSearch from './InputSearch';
 import { callDeleteBook, callFetchListBook } from '../../../services/api';
-import { DeleteTwoTone, EditTwoTone, ExportOutlined, PlusOutlined, ReloadOutlined } from '@ant-design/icons';
+import { DeleteTwoTone, EditTwoTone, ExportOutlined, PlusOutlined, ReloadOutlined, UnorderedListOutlined } from '@ant-design/icons';
 import moment from 'moment/moment';
 import { FORMAT_DATE_DISPLAY } from '../../../utils/constant';
 import * as XLSX from 'xlsx';
 import ProductViewDetail from './ProductViewDetail';
 import ProductModalCreate from './ProductModalCreate';
 import ProductModalUpdate from './ProductModalUpdate';
+import { fetchCount } from './../../../redux/counter/counterAPI';
+import { callFetchCategory } from './../../../services/api';
+import CategoryModelCreate from './CategoryModelCreate';
 
 const ProductTable = () => {
     const [listBook, setListBook] = useState([]);
@@ -27,9 +30,23 @@ const ProductTable = () => {
     const [openModalUpdate, setOpenModalUpdate] = useState(false);
     const [dataUpdate, setDataUpdate] = useState(null);
 
+    const [openModalCategory, setOpenModalCategory] = useState(false);
+    const [listCategory, setListCategory] = useState([]);
+
     useEffect(() => {
         fetchBook();
     }, [current, pageSize, filter, sortQuery]);
+
+    useEffect(() => {
+        fetchCategory();
+    },[]);
+
+    const fetchCategory = async () => {
+        const res = await callFetchCategory();
+        if (res && res.data.result) {
+            setListCategory(res.data.result);
+        }
+    }
 
     const fetchBook = async () => {
         setIsLoading(true)
@@ -84,7 +101,7 @@ const ProductTable = () => {
                                 setOpenViewDetail(true);
                             }}>{record.name}</a>
                             :
-                            <a  style={{textDecoration: 'line-through'}}
+                            <a style={{ textDecoration: 'line-through' }}
                                 className='product-name'
                                 href='#' onClick={() => {
                                     setDataViewDetail(record);
@@ -204,16 +221,20 @@ const ProductTable = () => {
     const renderHeader = () => {
         return (
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <span>
+                <span style={{ display: 'flex', gap: 15 }}>
                     <h3>Danh sách sản phẩm</h3>
                 </span>
                 <span style={{ display: 'flex', gap: 15 }}>
-                    <Button
+                    {/* <Button
                         icon={<ExportOutlined />}
                         type="primary"
                         onClick={() => handleExportData()}
-                    >Export</Button>
-
+                    >Export</Button> */}
+                    <Button
+                        icon={<UnorderedListOutlined />}
+                        type="primary"
+                        onClick={() => setOpenModalCategory(true)}
+                    >Danh mục sản phẩm</Button>
                     <Button id='add_product'
                         icon={<PlusOutlined />}
                         type="primary"
@@ -245,6 +266,9 @@ const ProductTable = () => {
             XLSX.writeFile(workbook, "ExportBook.csv");
         }
     }
+
+    
+    
     return (
         <>
             <Row gutter={[20, 20]}>
@@ -294,6 +318,14 @@ const ProductTable = () => {
                 dataUpdate={dataUpdate}
                 setDataUpdate={setDataUpdate}
                 fetchBook={fetchBook}
+            />
+
+            <CategoryModelCreate
+                openModalCategory={openModalCategory}
+                setOpenModalCategory={setOpenModalCategory}
+                listCategory={listCategory}
+                setListCategory={setListCategory}
+                fetchCategory={fetchCategory}
             />
 
         </>

@@ -52,13 +52,24 @@ export const callDeleteUser = (id) => {
 
 ///////////////////////
 
+export const callFetchListBookActive = (query) => {
+    return axios.get(`/api/v1/products/active?${query}`)
+}
+
 export const callFetchListBook = (query) => {
     return axios.get(`/api/v1/products?${query}`)
 }
 
-
 export const callFetchCategory = () => {
     return axios.get('/api/v1/categories');
+}
+
+export const createCategory = (category) => {
+    return axios.post('/api/v1/categories', {name: category});
+}
+
+export const updateCategory = (id, name) => {
+    return axios.put('/api/v1/categories', {id: id, name: name});
 }
 
 export const callCreateBook = (thumbnail, slider, name, price, sold, quantity, category) => {

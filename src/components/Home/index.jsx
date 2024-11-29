@@ -2,7 +2,7 @@ import { FilterTwoTone, ReloadOutlined, HomeOutlined, UserOutlined } from '@ant-
 import { Row, Col, Form, Checkbox, Divider, InputNumber, Button, Rate, Tabs, Pagination, Spin, Empty, Breadcrumb, Slider } from 'antd';
 import { useEffect, useState } from 'react';
 import { Link, useNavigate, useOutletContext } from 'react-router-dom';
-import { callFetchCategory, callFetchListBook } from '../../services/api';
+import { callFetchCategory, callFetchListBook, callFetchListBookActive } from '../../services/api';
 import './home.scss';
 import MobileFilter from './MobileFilter';
 import { FaStar } from "react-icons/fa";
@@ -74,7 +74,7 @@ const Home = () => {
             query += `&${sortQuery}`;
         }
 
-        const res = await callFetchListBook(query);
+        const res = await callFetchListBookActive(query);
         if (res && res.data) {
             setListBook(res.data.result.filter(item => item.quantity > 0));
             setTotal(res.data.meta.total)

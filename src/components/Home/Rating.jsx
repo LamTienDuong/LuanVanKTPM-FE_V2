@@ -21,8 +21,11 @@ const Rating = (props) => {
             listReviews.forEach(item => {
                 star += +item.rate;
             });
-            star = Math.round(star / listReviews.length);
-            setStar(star);
+            if (listReviews.length != 0) {
+                star = Math.round(star / listReviews.length);
+                setStar(star);
+            }
+            setStar(0);
         }
     }, [listReviews])
 
@@ -44,9 +47,9 @@ const Rating = (props) => {
 
     return (
         <>
-            <div style={{display: "flex", flexDirection: "row"}}>
+            <div style={{ display: "flex", flexDirection: "row" }}>
                 <FaStar style={{ color: '#ffce3d', fontSize: 16 }} />
-                <div style={{marginLeft: "5px"}} className="rating-star">{star}</div>
+                <div style={{ marginLeft: "5px" }} className="rating-star">{star}</div>
             </div>
         </>
     )
